@@ -1,65 +1,32 @@
-class Numbers:
+from Data import Data
 
-    def __init__(self, var, number):
-        self.var = var
+class Numbers(Data):
+
+    def __init__(self, name, number):
+        self.name = name
+        self.number = self.convert_to_num(number)
+
+    @staticmethod
+    def convert_to_num(number):
         if "." in number:
-            self.number = float(number)
+            return float(number)
         else:
-            self.number = int(number)
+            return int(number)
 
-    @classmethod
-    def save_number(cls, var, rest, everything):
-        obj = cls(var, rest)
-        everything[var] = obj
-        print(obj)
 
 class Rational(Numbers):
 
     def __str__(self):
         return f"  {self.number}"    
 
+
 class Complex(Numbers):
 
-    def __init__(self, var, rest):
-        for sign in ("+", "-", "/", "%", "*"):
-            if sign in rest:
-                reverse = False
-                # every sign except "*" and plus "*" with imaginary part without "*" like 4i)
-                try:
-                    if sign == "-":
-                        if rest[0] == "-":
-                            if "-" not in rest[1:]:
-                                continue
-                            rational, imaginary = rest[1:].split(sign)
-                            rational = "-" + rational
-                        else:
-                            rational, imaginary = rest.split(sign)
-                        imaginary = "-" + imaginary
-                    else:
-                        rational, imaginary = rest.split(sign)
-                    if "i" in rational:
-                        rational, imaginary = imaginary, rational
-                        reverse = True
-                    if "*" in imaginary:
-                        imaginary = imaginary.split("*")[0]
-                    else:
-                        imaginary = imaginary.split("i")[0]
-                # "*" sign and imaginary part with "*" like 4*i
-                except:
-                    rational, imaginary, i = rest.split(sign)
-                    if imaginary == "*":
-                        imaginary, i = i, imaginary
-                        #reverse = True
-                    elif imaginary == "i":
-                        imaginary = rational
-                        rational = i
-                break
-        super().__init__(var, rational)
+    def __init__(self, name, rest):
+        sign, rational, imaginary, reverse = self.process_signs(rest)
+        super().__init__(name, rational)
         self.sign = sign
-        if "." in imaginary:
-            self.imaginary = float(imaginary)
-        else:
-            self.imaginary = int(imaginary)
+        self.imaginary = self.convert_to_num(imaginary)
         if sign == "-" and self.imaginary > 0:
             self.sign = "+"
         if sign in ("/", "*", "%"):
@@ -84,3 +51,35 @@ class Complex(Numbers):
                 return "  0"
             else:
                 return f"  {self.imaginary}i"
+
+    def process_signs(self, rest):
+        for sign in ("+", "-", "/", "%", "*"):
+            if sign in rest:
+                reverse = False
+                # every sign except "*" and plus "*" with imaginary part without "*" like 4i)
+                try:
+                    if sign == "-":
+                        if rest[0] == "-":
+                            rest1 = rest[1:]
+                            if "-" not in rest1:
+                                continue
+                            rational, imaginary = rest1.split(sign)
+                            rational = "-" + rational
+                        else:
+                            rational, imaginary = rest.split(sign)
+                        imaginary = "-" + imaginary
+                    else:
+                        rational, imaginary = rest.split(sign)
+                    if "i" in rational:
+                        rational, imaginary = imaginary, rational
+                        reverse = True
+                    if "*" in imaginary:
+                        imaginary = imaginary.split("*")[0]
+                    else:
+                        imaginary = imaginary.split("i")[0]
+                # "*" sign and imaginary part with "*" like 4*i
+                except:
+                    rational, imaginary, i = rest.split(sign)
+                    if imaginary == "i":
+                        imaginary, rational = rational, i
+                return sign, rational, imaginary, reverse

@@ -3,34 +3,36 @@
 import sys
 import re
 
+from Data import Data
 from Numbers import Rational, Complex
 from Matrices import Matrices
-
-everything = {}
+from Functions import Functions
 
 def get_type(user_input):
+    user_input = user_input.lower()
     without_spaces = user_input.replace(" ", "")
-    var, rest = without_spaces.split("=")
+    name, rest = without_spaces.split("=")
     try:
-        Rational.save_number(var, rest, everything)
+        Rational.save_data(name, rest)
     except:
-        if "i" in rest:
-            Complex.save_number(var, rest, everything)
+        if "(" in name:
+            Functions.save_data(name, rest)
         elif "[" in rest:
-            Matrices.save_matrix(var, rest, everything)
+            Matrices.save_data(name, rest)
+        elif "i" in rest:
+            Complex.save_data(name, rest)
         else:
             print("not a number")
 
 def main():
     while True:
         user_input = input("> ")
-        user_input = user_input.lower()
         if user_input == "exit" or user_input == "quit":
             break
         elif "=" in user_input:
             get_type(user_input)
         elif user_input:
-            print(everything[user_input])
+            Data.show(user_input)
 
 def test_main():
     get_type(sys.argv[1])

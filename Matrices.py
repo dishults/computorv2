@@ -1,9 +1,10 @@
+from Data import Data
 from Numbers import Rational, Complex
 
-class Matrices:
+class Matrices(Data):
 
-    def __init__(self, var, matrix):
-        self.var = var
+    def __init__(self, name, matrix):
+        self.name = name
         if ";" not in matrix:
             self.dimentions = 1
             new = matrix.strip("[]").split(",")
@@ -45,12 +46,6 @@ class Matrices:
                 obj = Rational(0, cell)
                 new_row.append(obj.number)
             except:
-                #Complex()
-                pass
+                obj = Complex(0, cell)
+                new_row.append(obj)
         return new_row
-    
-    @staticmethod
-    def save_matrix(var, matrix, everything):
-        obj = Matrices(var, matrix)
-        everything[var] = obj
-        print(obj)

@@ -1,6 +1,6 @@
 import sys
 
-class Polynomials:
+class Polynomial:
     
     def __init__(self, variable, equation):       
         self.all_terms = {}

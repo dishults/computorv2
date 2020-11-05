@@ -6,7 +6,7 @@ import re
 from Data import Data
 from Numbers import Rational, Complex
 from Matrices import Matrices
-from Functions import Functions
+from Function import Function
 
 def get_type(user_input):
     user_input = user_input.lower()
@@ -16,7 +16,7 @@ def get_type(user_input):
         Rational.save_data(name, rest)
     except:
         if "(" in name:
-            Functions.save_data(name, rest)
+            Function.save_data(name, rest)
         elif "[" in rest:
             Matrices.save_data(name, rest)
         elif "i" in rest:

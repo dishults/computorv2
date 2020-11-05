@@ -49,32 +49,4 @@ class Functions(Data):
 
     def polynomials(self, equation):
         self.type = "polynomial"
-        """starts_with_minus = False
-        if equation[0] == "-":
-            equation = equation[1:]
-            starts_with_minus = True
-        for c in equation:
-            if c in ("+", "-"):
-                var, equation = equation.split(c)
-                try:
-                    var = Numbers.convert_to_num(var)
-                except:
-                    if self.var != var:
-                        raise ValueError
-                self.equation.append(var)
-                self.equation.append(c)
-        try:
-            equation = Numbers.convert_to_num(equation)
-        except:
-            if self.var != equation:
-                raise ValueError
-        self.equation.append(equation)        
-        
-        if starts_with_minus and type(self.equation[0]) in (int, float):
-            self.equation[0] *= -1
-        #self.equation = Polynomials(self.var, equation)"""
-
         self.equation = Polynomials(self.var, equation)
-        #Polynomials.print_reduced_form()
-        #Polynomials.print_degree()
-        #Polynomials.solve()

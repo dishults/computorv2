@@ -3,43 +3,54 @@ import sys
 class Polynomials:
     
     def __init__(self, variable, equation):       
-
-        def proceed(term, sign, inverse):
-            try:
-                coefficient, exponent = term.split(variable) # [2x, 5]
-            except:
-                coefficient = term.strip(variable) # [2x, 5]
-                exponent = 0
-            coefficient = coefficient.strip(variable) # [2, 5]
-            term = Terms(sign, coefficient, variable, exponent)
-            if term.exponent in self.all_terms:
-                self.all_terms[term.exponent].coefficient += term.coefficient
-            else:
-                self.all_terms[term.exponent] = term
-
         self.all_terms = {}
-        #if equation[0] == 
         equation = equation.replace("*", "")
         equation = equation.replace("^", "")
         previous = "+"
         if equation[0] == "-":
             previous = "-"
+            equation = equation[1:]
         for sign in equation:
             if sign in ("+", "-"):
                 term, equation = equation.split(sign, 1)
-                proceed(term, previous, False)
+                self.proceed(term, previous, variable)
                 previous = sign
-        proceed(equation, previous, False)
-        #terms = ["+"] + equation.split()
-        #if not (terms[1] == '0' and len(terms) == 2):
-        #    proceed(terms, inverse=False)
+        self.proceed(equation, previous, variable)
         #self.get_degree()
 
     def __str__(self):
-        p = ""
-        for term in self.all_terms:
-            p += str(self.all_terms[term])
+        p = "  "
+        terms_in_reverse__order = sorted(self.all_terms, reverse=True)
+        term = self.all_terms[terms_in_reverse__order[0]]
+        if term.coefficient < 0:
+            p += "-"
+        p += str(term)
+        for t in terms_in_reverse__order[1:]:
+            term = self.all_terms[t]
+            if term.coefficient > 0:
+                sign = " +"
+            else:
+                sign = " -"
+            p += f"{sign} {term}"
         return p
+
+    def proceed(self, term, sign, variable):
+        try: # 5x^2
+            coefficient, exponent = term.split(variable) 
+            assert exponent
+        except AssertionError: # 5x
+            coefficient = term.strip(variable) 
+            exponent = 1
+        except ValueError: # 5
+            coefficient = term
+            exponent = 0
+        term = Terms(sign, coefficient, variable, exponent)
+        if term.exponent in self.all_terms:
+            self.all_terms[term.exponent].coefficient += term.coefficient
+            if self.all_terms[term.exponent].coefficient == 0:
+                del self.all_terms[term.exponent]
+        else:
+            self.all_terms[term.exponent] = term
 
     def get_degree(self):
         terms = self.all_terms
@@ -162,4 +173,9 @@ class Terms:
         num = abs(self.coefficient)
         if num % 1 == 0:
             num = int(num)
-        return f"{num} * {self.variable}^{self.exponent}"
+        if self.exponent > 1:
+            return f"{num} * {self.variable}^{self.exponent}"
+        elif self.exponent == 1:
+            return f"{num}*{self.variable}"
+        elif self.exponent == 0:
+            return f"{num}"

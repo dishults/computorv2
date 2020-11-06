@@ -11,3 +11,8 @@ class Data:
     @classmethod
     def show(cls, name):
         print(cls.everything[name])
+    
+    @classmethod
+    def reassign(cls, where, what):
+        cls.everything[where] = cls.everything[what]
+        cls.show(where)

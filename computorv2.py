@@ -8,10 +8,7 @@ from Numbers import Rational, Complex
 from Matrices import Matrices
 from Function import Function
 
-def get_type(user_input):
-    user_input = user_input.lower()
-    without_spaces = user_input.replace(" ", "")
-    name, rest = without_spaces.split("=")
+def get_type(name, rest):
     try:
         Rational.save_data(name, rest)
     except:
@@ -21,21 +18,30 @@ def get_type(user_input):
             Matrices.save_data(name, rest)
         elif "i" in rest:
             Complex.save_data(name, rest)
+        elif rest in Data.everything:
+            Data.reassign(name, rest)
         else:
-            print("not a number")
+            print("Wrong input")
+
+def process_input(user_input):
+    user_input = user_input.lower()
+    user_input = user_input.replace(" ", "")
+    if "=" in user_input:
+        name, rest = user_input.split("=")
+        get_type(name, rest)
+    elif user_input:
+        Data.show(user_input)
+
 
 def main():
     while True:
         user_input = input("> ")
         if user_input == "exit" or user_input == "quit":
-            break
-        elif "=" in user_input:
-            get_type(user_input)
-        elif user_input:
-            Data.show(user_input)
+            raise KeyboardInterrupt
+        process_input(user_input)
 
 def test_main():
-    get_type(sys.argv[1])
+    process_input(sys.argv[1])
 
 if __name__ == "__main__":
     try:

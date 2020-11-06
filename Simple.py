@@ -1,4 +1,4 @@
-om Numbers import Numbers
+from Numbers import Numbers
 
 class Simple:
 

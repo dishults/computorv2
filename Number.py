@@ -1,10 +1,13 @@
 from Data import Data
 
-class Numbers(Data):
+class Number(Data):
 
-    def __init__(self, name, number):
-        self.name = name
+    def __init__(self, number):
         self.number = self.convert_to_num(number)
+
+    def __imul__(self, other):
+        self.number *= other
+        return self
 
     @staticmethod
     def convert_to_num(number):
@@ -14,17 +17,17 @@ class Numbers(Data):
             return int(number)
 
 
-class Rational(Numbers):
+class Rational(Number):
 
     def __str__(self):
-        return f"  {self.number}"    
+        return f"{self.number}"
 
 
-class Complex(Numbers):
+class Complex(Number):
 
-    def __init__(self, name, rest):
+    def __init__(self, rest):
         sign, rational, imaginary, reverse = self.process_signs(rest)
-        super().__init__(name, rational)
+        super().__init__(rational)
         self.sign = sign
         self.imaginary = self.convert_to_num(imaginary)
         if sign == "-" and self.imaginary > 0:
@@ -43,14 +46,14 @@ class Complex(Numbers):
 
     def __str__(self):
         if self.number:
-            return f"  {self.number} {self.sign} {abs(self.imaginary)}i"
+            return f"{self.number} {self.sign} {abs(self.imaginary)}i"
         else:
             if self.imaginary == 1:
-                return "  i"
+                return "i"
             elif self.imaginary == 0:
-                return "  0"
+                return "0"
             else:
-                return f"  {self.imaginary}i"
+                return f"{self.imaginary}i"
 
     def process_signs(self, rest):
         for sign in ("+", "-", "/", "%", "*"):

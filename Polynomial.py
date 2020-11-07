@@ -1,6 +1,8 @@
 import sys
 
-class Polynomial:
+from Data import Data
+
+class Polynomial(Data):
     
     def __init__(self, variable, equation):       
         self.all_terms = {}
@@ -19,7 +21,7 @@ class Polynomial:
         #self.get_degree()
 
     def __str__(self):
-        p = "  "
+        p = ""
         terms_in_reverse__order = sorted(self.all_terms, reverse=True)
         term = self.all_terms[terms_in_reverse__order[0]]
         if term.coefficient < 0:

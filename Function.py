@@ -1,16 +1,16 @@
-from Data import Data
 from Simple import Simple
 from Polynomial import Polynomial
 
-class Function(Data):
+def function(name, var, equation):
+    if "^" in equation:
+        Polynomial.save_data([name, var], equation)
+    else:
+        Simple.save_data([name, var], equation)
 
-    def __init__(self, name, equation):
-        self.name, var = name.split("(")
-        self.var = var.strip("()")
-        if "^" in equation:
-            self.equation = Polynomial(self.var, equation)
-        else:
-            self.equation = Simple(self.var, equation)
-    
-    def __str__(self):
-        return " " + str(self.equation)
+def save(name, rest):
+    try:
+        name, var = name.split("(")
+        var = var.strip("()")
+        function(name, var, rest)
+    except:
+        function(name, 0, rest)

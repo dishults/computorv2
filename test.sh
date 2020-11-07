@@ -76,7 +76,7 @@ CORRECT=(
 "  12i"
 "  12i"
 "  -12i"
-"  [  3 + 4i ,  2 - 3i ]"
+"  \[ 3 + 4i , 2 - 3i \]"
 "  -2 \* z - 5"
 "  2 \* x^5 + 4 \* x^2 - 5\*x + 4"
 "  43 \* y / (4 % 2 \* y)"
@@ -91,7 +91,7 @@ red="\033[31m"
 end="\033[0m"
 
 run_test() {
-    echo -e "\n$green$1$end" && ./computorv2.py "$1"    
+    #echo -e "\n$green$1$end" && ./computorv2.py "$1"    
     if ! ./computorv2.py "$1" | grep -q "$2"; then
         echo -e "$red$2$end"
     fi

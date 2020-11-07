@@ -1,27 +1,27 @@
 #!/usr/bin/env python3
 
 import sys
-import re
+
+import function
 
 from Data import Data
-from Numbers import Rational, Complex
-from Matrices import Matrices
-from Function import Function
+from Number import Rational, Complex
+from Matrix import Matrix
 
 def get_type(name, rest):
-    try:
-        Rational.save_data(name, rest)
-    except:
-        if "(" in name:
-            Function.save_data(name, rest)
-        elif "[" in rest:
-            Matrices.save_data(name, rest)
-        elif "i" in rest:
-            Complex.save_data(name, rest)
-        elif rest in Data.everything:
-            Data.reassign(name, rest)
-        else:
-            print("Wrong input")
+    if "(" in name:
+        function.save(name, rest)
+    elif "[" in rest:
+        Matrix.save_data(name, rest)
+    elif "i" in rest:
+        Complex.save_data(name, rest)
+    elif rest in Data.everything:
+        Data.reassign(name, rest)
+    else:
+        try:
+            Rational.save_data(name, rest)
+        except:
+            function.save(name, rest)
 
 def process_input(user_input):
     user_input = user_input.lower()
@@ -38,7 +38,11 @@ def main():
         user_input = input("> ")
         if user_input == "exit" or user_input == "quit":
             raise KeyboardInterrupt
-        process_input(user_input)
+        try:
+            process_input(user_input)
+        except:
+            print("Wrong input")
+
 
 def test_main():
     process_input(sys.argv[1])

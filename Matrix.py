@@ -1,10 +1,9 @@
 from Data import Data
-from Numbers import Rational, Complex
+from Number import Rational, Complex
 
-class Matrices(Data):
+class Matrix(Data):
 
-    def __init__(self, name, matrix):
-        self.name = name
+    def __init__(self, matrix):
         if ";" not in matrix:
             self.dimentions = 1
             new = matrix.strip("[]").split(",")
@@ -21,7 +20,7 @@ class Matrices(Data):
                 self.matrix.append(new)
 
     def __str__(self):
-        m = "  ["
+        m = "["
         if self.dimentions == 1:
             for c, cell in enumerate(self.matrix):
                 if c > 0:
@@ -43,9 +42,9 @@ class Matrices(Data):
         new_row = []
         for cell in row:
             try:
-                obj = Rational(0, cell)
+                obj = Rational(cell)
                 new_row.append(obj.number)
             except:
-                obj = Complex(0, cell)
+                obj = Complex(cell)
                 new_row.append(obj)
         return new_row

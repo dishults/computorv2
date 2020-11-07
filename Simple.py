@@ -1,6 +1,7 @@
-from Numbers import Numbers
+from Data import Data
+from Number import Number, Rational, Complex
 
-class Simple:
+class Simple(Data):
 
     def __init__(self, variable, equation, sub_equation=False):
         self.equation = []
@@ -23,25 +24,29 @@ class Simple:
                     break
         if equation:
             self.proceed(equation)
-        if starts_with_minus and type(self.equation[0]) in (int, float):
-            self.equation[0] *= -1
+        if starts_with_minus:
+            if isinstance(self.equation[0], Number):
+                self.equation[0] *= -1
+            else:
+                self.equation[0] = "-" + self.equation[0]
     
     def __str__(self):
-        f = ""
+        f = f"{self.equation[0]}"
+        for e in self.equation[1:]:
+            f += f" {e}"
         if self.sub_equation:
-            f += f"({self.equation[0]}"
-            for e in self.equation[1:]:
-                f += f" {e}"
-            f += ")"
-        else:
-            for e in self.equation:
-                f += f" {e}"
+            f = "(" + f + ")"
         return f
     
     def proceed(self, var):
         try:
-            var = Numbers.convert_to_num(var)
+            var = Rational(var)
+            #var = Number.convert_to_num(var)
         except:
-            if self.var != var:
+            if var in Data.everything:
+                var = Data.everything[var]
+            elif not self.var or self.var != var:
                 raise ValueError
         self.equation.append(var)
+    
+    #def calculate(self, var=0):

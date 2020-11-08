@@ -29,6 +29,11 @@ def process_input(user_input):
     if "=" in user_input:
         name, rest = user_input.split("=")
         get_type(name, rest)
+    elif "(" in user_input:
+        func, var = user_input.split("(")
+        var = var.strip("()")
+        Data.everything[func].fix(var)
+        Data.everything[func].calculate(var)
     elif user_input:
         Data.show(user_input)
 

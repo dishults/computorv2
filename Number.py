@@ -5,13 +5,44 @@ class Number(Data):
     def __init__(self, number):
         self.number = self.convert_to_num(number)
 
-    def __imul__(self, other):
-        self.number *= other
+    def __itruediv__(self, other):
+        self.number /= other.number
+        if self.number * 10 % 10 == 0:
+            self.number = int(self.number)
         return self
+
+    def __imod__(self, other):
+        self.number %= other.number
+        return self
+
+    def __imul__(self, other):
+        self.number *= other.number
+        return self
+
+    def __iadd__(self, other):        
+        self.number += other.number
+        return self
+    
+    def __isub__(self, other):
+        self.number -= other.number
+        return self
+
+    operations = {
+        "/" : __itruediv__,
+        "%" : __imod__,
+        "*" : __imul__,
+        "+" : __iadd__,
+        "-" : __isub__,
+    }
+
+    def math(self, sign, other):
+        return self.operations[sign](self, other)
 
     @staticmethod
     def convert_to_num(number):
-        if "." in number:
+        if type(number) in (float, int):
+            return number
+        elif "." in number:
             return float(number)
         else:
             return int(number)

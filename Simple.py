@@ -11,19 +11,7 @@ class Simple(Data):
         if equation[0] == "-":
             equation = equation[1:]
             starts_with_minus = True
-        for c in equation: # change to while loop
-            if c in ("+", "-", "/", "%", "*"):
-                var, equation = equation.split(c, 1)
-                self.proceed(var)
-                self.equation.append(c)
-            elif c == "(":
-                equation = equation.strip("(")
-                var, equation = equation.rsplit(")", 1)
-                self.equation.append(Simple(variable, var, sub_equation=True))
-                if not equation:
-                    break
-        if equation:
-            self.proceed(equation)
+        self.get_variables(equation)
         if starts_with_minus:
             if isinstance(self.equation[0], Number):
                 self.equation[0].number *= -1
@@ -31,7 +19,7 @@ class Simple(Data):
                 self.equation[0] = "-" + self.equation[0]
         if not variable and not sub_equation:
             self.calculate()
-    
+
     def __str__(self):
         f = f"{self.equation[0]}"
         for e in self.equation[1:]:
@@ -39,7 +27,50 @@ class Simple(Data):
         if self.sub_equation:
             f = "(" + f + ")"
         return f
-    
+
+    def __rtruediv__(self, other):
+        self.calculate()
+        return other / self.equation[0]
+
+    def __rmod__(self, other):
+        self.calculate()
+        return other % self.equation[0]
+
+    def __rmul__(self, other):
+        self.calculate()
+        return other * self.equation[0]
+
+    def __radd__(self, other):
+        self.calculate()
+        return other + self.equation[0]
+
+    def __rsub__(self, other):
+        self.calculate()
+        return other - self.equation[0]
+
+    def get_variables(self, equation):
+        i = 0
+        while i < len(equation):
+            sign = equation[i]
+            if sign in ("+", "-", "/", "%", "*"):
+                var, equation = equation.split(sign, 1)
+                if not var:
+                    self.equation.append(sign)
+                    break
+                else:
+                    self.proceed(var)
+                    self.equation.append(sign)
+                    i = 0
+            elif sign == "(":
+                equation = equation.strip("(")
+                var, equation = equation.rsplit(")", 1)
+                self.equation.append(Simple(self.var, var, sub_equation=True))
+                i = 0
+            else:
+                i += 1
+        if equation:
+            self.proceed(equation)
+
     def proceed(self, var):
         try:
             var = Rational(var)
@@ -57,18 +88,17 @@ class Simple(Data):
                 if v == var:
                     self.equation[i] = new_var
 
-    def calculate(self, var=0):        
-        for i, sign in enumerate(self.equation):
-            if sign in ("/", "%", "*"):
+    def calculate(self, var=0, signs=("/", "%", "*")):
+        i = 0
+        while i < len(self.equation):
+            sign = self.equation[i]
+            if sign in signs:
                 self.equation.pop(i)
                 other = self.equation.pop(i)
-                if isinstance(other, Simple):
-                    other.calculate()
-                    other = other.equation[0]
                 self.equation[i - 1].math(sign, other)
+                i = 0
+            else:
+                i += 1
+        if signs[0] == "/":
+            self.calculate(signs=("+", "-"))
 
-        for i, sign in enumerate(self.equation):
-            if sign in ("+", "-"):
-                self.equation.pop(i)
-                other = self.equation.pop(i)
-                self.equation[i - 1].math(sign, other)

@@ -5,38 +5,51 @@ class Number(Data):
     def __init__(self, number):
         self.number = self.convert_to_num(number)
 
-    def __itruediv__(self, other):
-        self.number /= other.number
+    def __truediv__(self, other):
+        self.number /= other
         if self.number * 10 % 10 == 0:
             self.number = int(self.number)
-        return self
+        return self.number
 
-    def __imod__(self, other):
-        self.number %= other.number
-        return self
+    def __mod__(self, other):
+        return self.number % other
 
-    def __imul__(self, other):
-        self.number *= other.number
-        return self
+    def __mul__(self, other):        
+        return self.number * other
 
-    def __iadd__(self, other):        
-        self.number += other.number
-        return self
+    def __add__(self, other):        
+        return self.number + other
     
-    def __isub__(self, other):
-        self.number -= other.number
-        return self
+    def __sub__(self, other):        
+        return self.number - other
+
+
+    def __rtruediv__(self, other):
+        return other / self.number
+
+    def __rmod__(self, other):
+        return other % self.number
+
+    def __rmul__(self, other):
+        return other * self.number
+
+    def __radd__(self, other):
+        return other + self.number
+
+    def __rsub__(self, other):
+        return other - self.number
+
 
     operations = {
-        "/" : __itruediv__,
-        "%" : __imod__,
-        "*" : __imul__,
-        "+" : __iadd__,
-        "-" : __isub__,
+        "/" : __truediv__,
+        "%" : __mod__,
+        "*" : __mul__,
+        "+" : __add__,
+        "-" : __sub__,
     }
 
     def math(self, sign, other):
-        return self.operations[sign](self, other)
+        self.number = self.operations[sign](self, other)
 
     @staticmethod
     def convert_to_num(number):

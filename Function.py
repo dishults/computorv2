@@ -7,7 +7,7 @@ def function(name, var, equation):
     else:
         Simple.save_data([name, var], equation)
 
-def save(name, rest):
+def save_function(name, rest):
     try:
         name, var = name.split("(")
         var = var.strip("()")

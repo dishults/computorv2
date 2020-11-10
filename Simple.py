@@ -1,5 +1,5 @@
 from Data import Data
-from Number import Number, Rational, Complex
+from Number import Number, number
 
 class Simple(Data):
 
@@ -28,6 +28,27 @@ class Simple(Data):
             f = "(" + f + ")"
         return f
 
+    def __truediv__(self, other):
+        self.calculate()
+        return self.equation[0] / other
+
+    def __mod__(self, other):
+        self.calculate()
+        return self.equation[0] % other
+
+    def __mul__(self, other):
+        self.calculate()
+        return self.equation[0] * other
+
+    def __add__(self, other):
+        self.calculate()
+        return self.equation[0] + other
+
+    def __sub__(self, other):
+        self.calculate()
+        return self.equation[0] - other
+
+
     def __rtruediv__(self, other):
         self.calculate()
         return other / self.equation[0]
@@ -48,32 +69,54 @@ class Simple(Data):
         self.calculate()
         return other - self.equation[0]
 
+    operations = {
+        "/" : __truediv__,
+        "%" : __mod__,
+        "*" : __mul__,
+        "+" : __add__,
+        "-" : __sub__,
+    }
+
+    def math(self, sign, other):
+        return number(self.operations[sign](self, other))
+
     def get_variables(self, equation):
         i = 0
         while i < len(equation):
             sign = equation[i]
             if sign in ("+", "-", "/", "%", "*"):
                 var, equation = equation.split(sign, 1)
-                if not var:
-                    self.equation.append(sign)
-                    break
-                else:
+                if var:
                     self.proceed(var)
-                    self.equation.append(sign)
                     i = 0
+                self.equation.append(sign)
             elif sign == "(":
-                equation = equation.strip("(")
-                var, equation = equation.rsplit(")", 1)
+                equation = equation[1:]
+                braket = self.what_braket(equation)
+                var = equation[:braket]
+                equation = equation[braket+1:]
                 self.equation.append(Simple(self.var, var, sub_equation=True))
                 i = 0
             else:
                 i += 1
-        if equation:
+        if equation and equation != ")":
             self.proceed(equation)
+
+    def what_braket(self, equation):
+        braket = 0
+        for i, char in enumerate(equation):
+            if char == "(":
+                braket += 1
+            elif char == ")":
+                if not braket:
+                    break
+                else:
+                    braket -= 1
+        return i
 
     def proceed(self, var):
         try:
-            var = Rational(var)
+            var = number(var)
         except:
             if var in Data.everything:
                 var = Data.everything[var]
@@ -83,7 +126,7 @@ class Simple(Data):
 
     def fix(self, var):
         if var:
-            new_var = Rational(var)
+            new_var = number(var)
             for i, v in enumerate(self.equation):
                 if v == var:
                     self.equation[i] = new_var
@@ -95,7 +138,7 @@ class Simple(Data):
             if sign in signs:
                 self.equation.pop(i)
                 other = self.equation.pop(i)
-                self.equation[i - 1].math(sign, other)
+                self.equation[i - 1] = self.equation[i - 1].math(sign, other)
                 i = 0
             else:
                 i += 1

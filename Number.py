@@ -50,6 +50,7 @@ class Number(Data):
 
     def math(self, sign, other):
         self.number = self.operations[sign](self, other)
+        return self
 
     @staticmethod
     def convert_to_num(number):
@@ -130,3 +131,17 @@ class Complex(Number):
                     if imaginary == "i":
                         imaginary, rational = rational, i
                 return sign, rational, imaginary, reverse
+
+def number(number):
+    try:
+        assert "i" in number
+        return Complex(number)
+    except:
+        return Rational(number)
+
+def save_number(name, number):
+    try:
+        assert "i" in number
+        Complex.save_data(name, number)
+    except:
+        Rational.save_data(name, number)

@@ -1,5 +1,5 @@
 from Data import Data
-from Number import Rational, Complex
+from Number import Rational, number
 
 class Matrix(Data):
 
@@ -41,10 +41,9 @@ class Matrix(Data):
     def get_one_row(self, row):
         new_row = []
         for cell in row:
-            try:
-                obj = Rational(cell)
+            obj = number(cell)
+            if isinstance(obj, Rational):
                 new_row.append(obj.number)
-            except:
-                obj = Complex(cell)
+            else:
                 new_row.append(obj)
         return new_row

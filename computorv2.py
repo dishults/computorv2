@@ -2,26 +2,26 @@
 
 import sys
 
-import function
+from function import save_function
+from Number import save_number
 
 from Data import Data
-from Number import Rational, Complex
 from Matrix import Matrix
 
 def get_type(name, rest):
     if "(" in name:
-        function.save(name, rest)
+        save_function(name, rest)
     elif "[" in rest:
         Matrix.save_data(name, rest)
     elif "i" in rest:
-        Complex.save_data(name, rest)
+        save_number(name, rest)
     elif rest in Data.everything:
         Data.reassign(name, rest)
     else:
         try:
-            Rational.save_data(name, rest)
+            save_number(name, rest)
         except:
-            function.save(name, rest)
+            save_function(name, rest)
 
 def process_input(user_input):
     user_input = user_input.lower()
@@ -51,6 +51,8 @@ def main():
 
 def test_main():
     process_input(sys.argv[1])
+    #try: process_input(sys.argv[1])
+    #except: pass
 
 if __name__ == "__main__":
     try:

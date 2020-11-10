@@ -21,19 +21,28 @@ def get_type(name, rest):
         try:
             save_number(name, rest)
         except:
-            save_function(name, rest)
+            save_function(name, rest, simple=True)
+
+def check_input(user_input, allowed_chars):
+    for char in user_input:
+        if not char.isalnum() and not char in allowed_chars:
+            raise SyntaxError
 
 def process_input(user_input):
     user_input = user_input.lower()
     user_input = user_input.replace(" ", "")
-    if "=" in user_input:
+    check_input(user_input, (".,*/%+-()[;]^=?"))
+    if "=" in user_input and not user_input.endswith("?"):
         name, rest = user_input.split("=")
+        check_input(name, (".,*/%+-()[;]"))
         get_type(name, rest)
     elif "(" in user_input:
         func, var = user_input.split("(")
-        var = var.strip("()")
-        Data.everything[func].fix(var)
+        var, rest = var.split(")", 1)
+        if (rest and not rest.endswith("?")):
+            raise SyntaxError
         Data.everything[func].calculate(var)
+        Data.show(func)
     elif user_input:
         Data.show(user_input)
 
@@ -50,7 +59,11 @@ def main():
 
 
 def test_main():
+    #process_input("funA(x) = 2 * x - 5")
+    #process_input("varC = 3")
+    #process_input("funA(varC)")
     process_input(sys.argv[1])
+    
     #try: process_input(sys.argv[1])
     #except: pass
 

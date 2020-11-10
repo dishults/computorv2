@@ -19,6 +19,8 @@ class Simple(Data):
                 self.equation[0] = "-" + self.equation[0]
         if not variable and not sub_equation:
             self.calculate()
+        if not self.at_least_one_processed_var():
+            raise SyntaxError
 
     def __str__(self):
         f = f"{self.equation[0]}"
@@ -124,14 +126,25 @@ class Simple(Data):
                 raise ValueError
         self.equation.append(var)
 
+    def at_least_one_processed_var(self):
+        for e in self.equation:
+            if isinstance(e, Data):
+                return True
+        return False
+
     def fix(self, var):
         if var:
-            new_var = number(var)
+            if var in Data.everything:
+                new_var = Data.everything[var]
+            else:
+                new_var = number(var) #get_type()
             for i, v in enumerate(self.equation):
-                if v == var:
+                if v == self.var:
                     self.equation[i] = new_var
 
     def calculate(self, var=0, signs=("/", "%", "*")):
+        if var:
+            self.fix(var)
         i = 0
         while i < len(self.equation):
             sign = self.equation[i]
@@ -143,5 +156,5 @@ class Simple(Data):
             else:
                 i += 1
         if signs[0] == "/":
-            self.calculate(signs=("+", "-"))
+            self.calculate(var=var, signs=("+", "-"))
 

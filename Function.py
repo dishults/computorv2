@@ -16,3 +16,12 @@ def save_function(name, rest, simple=False):
         if var == "i":
             raise SyntaxError
         function(name, var, rest)
+
+def calculate_function(equation):
+    if "=" in equation:
+        equation = equation.split("=")[0]
+    if "?" in equation:
+        equation = equation.strip("?")
+    obj = Simple(0, equation)
+    res = obj.calculate(obj.equation)
+    return res

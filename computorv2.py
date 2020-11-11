@@ -2,7 +2,7 @@
 
 import sys
 
-from function import save_function
+from function import save_function, calculate_function
 from Number import save_number
 
 from Data import Data
@@ -44,7 +44,11 @@ def process_input(user_input):
         res = Data.calculate(func, var)
         print(" ", res)
     elif user_input:
-        Data.show(user_input)
+        try:
+            Data.show(user_input)
+        except:
+            res = calculate_function(user_input)
+            print(" ", res)
 
 
 def main():
@@ -59,6 +63,7 @@ def main():
 
 
 def test_main():
+    process_input("f(x) = 2 + x")
     process_input(sys.argv[1])
     
     #try: process_input(sys.argv[1])

@@ -41,8 +41,8 @@ def process_input(user_input):
         var, rest = var.split(")", 1)
         if (rest and not rest.endswith("?")):
             raise SyntaxError
-        Data.everything[func].calculate(var)
-        Data.show(func)
+        res = Data.calculate(func, var)
+        print(" ", res)
     elif user_input:
         Data.show(user_input)
 
@@ -59,9 +59,6 @@ def main():
 
 
 def test_main():
-    #process_input("funA(x) = 2 * x - 5")
-    #process_input("varC = 3")
-    #process_input("funA(varC)")
     process_input(sys.argv[1])
     
     #try: process_input(sys.argv[1])

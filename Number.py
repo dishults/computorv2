@@ -1,3 +1,5 @@
+from abc import abstractmethod
+
 from Data import Data
 
 class Number(Data):
@@ -6,10 +8,10 @@ class Number(Data):
         self.number = self.convert_to_num(number)
 
     def __truediv__(self, other):
-        self.number /= other
-        if self.number * 10 % 10 == 0:
-            self.number = int(self.number)
-        return self.number
+        number = self.number / other
+        if number * 10 % 10 == 0:
+            number = int(number)
+        return number
 
     def __mod__(self, other):
         return self.number % other
@@ -48,9 +50,12 @@ class Number(Data):
         "-" : __sub__,
     }
 
+    @abstractmethod
     def math(self, sign, other):
-        self.number = self.operations[sign](self, other)
-        return self
+        pass
+
+    def __neg__(self):
+        return self.math("*", -1)
 
     @staticmethod
     def convert_to_num(number):
@@ -66,6 +71,9 @@ class Rational(Number):
 
     def __str__(self):
         return f"{self.number}"
+
+    def math(self, sign, other):
+        return Rational(self.operations[sign](self, other))
 
 
 class Complex(Number):

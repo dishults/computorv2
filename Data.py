@@ -19,3 +19,9 @@ class Data:
     def reassign(cls, where, what):
         cls.everything[where] = cls.everything[what]
         cls.show(where)
+
+    @classmethod
+    def calculate(cls, func, var):
+        obj = cls.everything[func]
+        res = obj.calculate_with_variable(var, obj.equation[:])
+        return res

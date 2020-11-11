@@ -18,7 +18,7 @@ class Simple(Data):
             else:
                 self.equation[0] = "-" + self.equation[0]
         if not variable and not sub_equation:
-            self.calculate()
+            self.calculate(self.equation)
         if not self.at_least_one_processed_var():
             raise SyntaxError
 
@@ -31,45 +31,45 @@ class Simple(Data):
         return f
 
     def __truediv__(self, other):
-        self.calculate()
-        return self.equation[0] / other
+        res = self.calculate(self.equation[:])
+        return res / other
 
     def __mod__(self, other):
-        self.calculate()
-        return self.equation[0] % other
+        res = self.calculate(self.equation[:])
+        return res % other
 
     def __mul__(self, other):
-        self.calculate()
-        return self.equation[0] * other
+        res = self.calculate(self.equation[:])
+        return res * other
 
     def __add__(self, other):
-        self.calculate()
-        return self.equation[0] + other
+        res = self.calculate(self.equation[:])
+        return res + other
 
     def __sub__(self, other):
-        self.calculate()
-        return self.equation[0] - other
+        res = self.calculate(self.equation[:])
+        return res - other
 
 
     def __rtruediv__(self, other):
-        self.calculate()
-        return other / self.equation[0]
+        res = self.calculate(self.equation[:])
+        return other / res
 
     def __rmod__(self, other):
-        self.calculate()
-        return other % self.equation[0]
+        res = self.calculate(self.equation[:])
+        return other % res
 
     def __rmul__(self, other):
-        self.calculate()
-        return other * self.equation[0]
+        res = self.calculate(self.equation[:])
+        return other * res
 
     def __radd__(self, other):
-        self.calculate()
-        return other + self.equation[0]
+        res = self.calculate(self.equation[:])
+        return other + res
 
     def __rsub__(self, other):
-        self.calculate()
-        return other - self.equation[0]
+        res = self.calculate(self.equation[:])
+        return other - res
 
     operations = {
         "/" : __truediv__,
@@ -93,19 +93,27 @@ class Simple(Data):
                     i = 0
                 self.equation.append(sign)
             elif sign == "(":
-                equation = equation[1:]
-                braket = self.what_braket(equation)
-                var = equation[:braket]
-                equation = equation[braket+1:]
-                self.equation.append(Simple(self.var, var, sub_equation=True))
+                if equation[0] == "(":
+                    equation = equation[1:]
+                    braket = self.what_braket(equation)
+                    var = equation[:braket]
+                    equation = equation[braket+1:]
+                    res = Simple(self.var, var, sub_equation=True)
+                else:
+                    braket = self.what_braket(equation, -1)
+                    func = equation[:i]
+                    var = equation[i+1:braket]
+                    equation = equation[braket+1:]
+                    res = Data.calculate(func, var)
+                self.equation.append(res)
                 i = 0
             else:
                 i += 1
         if equation and equation != ")":
             self.proceed(equation)
 
-    def what_braket(self, equation):
-        braket = 0
+    def what_braket(self, equation, braket=0):
+        braket = braket
         for i, char in enumerate(equation):
             if char == "(":
                 braket += 1
@@ -132,29 +140,30 @@ class Simple(Data):
                 return True
         return False
 
-    def fix(self, var):
-        if var:
-            if var in Data.everything:
-                new_var = Data.everything[var]
-            else:
-                new_var = number(var) #get_type()
-            for i, v in enumerate(self.equation):
-                if v == self.var:
-                    self.equation[i] = new_var
-
-    def calculate(self, var=0, signs=("/", "%", "*")):
-        if var:
-            self.fix(var)
+    def calculate(self, equation, signs=("/", "%", "*")):
         i = 0
-        while i < len(self.equation):
-            sign = self.equation[i]
+        while i < len(equation):
+            sign = equation[i]
             if sign in signs:
-                self.equation.pop(i)
-                other = self.equation.pop(i)
-                self.equation[i - 1] = self.equation[i - 1].math(sign, other)
+                equation.pop(i)
+                other = equation.pop(i)
+                equation[i - 1] = equation[i - 1].math(sign, other)
                 i = 0
             else:
                 i += 1
         if signs[0] == "/":
-            self.calculate(var=var, signs=("+", "-"))
+            return self.calculate(equation, signs=("+", "-"))[0]
+        return equation
 
+    def calculate_with_variable(self, var, equation):
+        negative_var = "-" + self.var
+        if var in Data.everything:
+            new_var = Data.everything[var]
+        else:
+            new_var = number(var) #get_type()
+        for i, v in enumerate(equation):
+            if v == self.var:
+                equation[i] = new_var
+            elif v == negative_var:
+                equation[i] = -new_var
+        return self.calculate(equation)

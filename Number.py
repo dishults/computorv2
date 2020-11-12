@@ -6,6 +6,7 @@ class Number(Data):
 
     def __init__(self, number):
         self.number = self.convert_to_num(number)
+        self.reserved = False
 
     def __truediv__(self, other):
         number = self.number / other

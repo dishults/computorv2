@@ -7,6 +7,7 @@ class Simple(Data):
         self.expression = []
         self.var = variable
         self.sub_expression = sub_expression
+        self.reserved = False
         starts_with_minus = False
         if expression[0] == "-":
             expression = expression[1:]
@@ -17,7 +18,7 @@ class Simple(Data):
                 self.expression[0].number *= -1
             else:
                 self.expression[0] = "-" + self.expression[0]
-        if not variable and not sub_expression:
+        if not sub_expression:
             self.calculate(self.expression)
         if not self.at_least_one_processed_var():
             raise SyntaxError
@@ -140,20 +141,45 @@ class Simple(Data):
                 return True
         return False
 
-    def calculate(self, expression, signs=("/", "%", "*")):
+    def calculate_plus_minus(self, expression):
         i = 0
         while i < len(expression):
             sign = expression[i]
-            if sign in signs:
-                expression.pop(i)
-                other = expression.pop(i)
-                expression[i - 1] = expression[i - 1].math(sign, other)
-                i = 0
+            if sign in ("+", "-"):
+                if type(expression[i-1]) == str or type(expression[i+1]) == str or\
+                    expression[i+1].reserved or expression[i-1].reserved:
+                    i += 1
+                else:
+                    expression.pop(i)
+                    other = expression.pop(i)
+                    expression[i-1] = expression[i-1].math(sign, other)
+                    i = 0
             else:
                 i += 1
-        if signs[0] == "/":
-            return self.calculate(expression, signs=("+", "-"))[0]
         return expression
+
+    def calculate(self, expression):
+        i = 0
+        while i < len(expression):
+            sign = expression[i]
+            if sign in ("/", "%", "*"):
+                if type(expression[i-1]) == str:
+                    expression[i+1].reserved = True
+                    i += 1
+                elif type(expression[i+1]) == str:
+                    expression[i-1].reserved = True
+                    i += 1
+                else:
+                    expression.pop(i)
+                    other = expression.pop(i)
+                    expression[i-1] = expression[i-1].math(sign, other)
+                    i = 0
+            else:
+                i += 1
+        res = self.calculate_plus_minus(expression)
+        if len(res) == 1:
+            res = res[0]
+        return res
 
     def calculate_with_variable(self, var, expression):
         negative_var = "-" + self.var

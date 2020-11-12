@@ -90,7 +90,7 @@ class Simple(Data):
             if sign in ("+", "-", "/", "%", "*"):
                 var, expression = expression.split(sign, 1)
                 if var:
-                    self.proceed(var)
+                    self.process_variable(var)
                     i = 0
                 self.expression.append(sign)
             elif sign == "(":
@@ -111,7 +111,7 @@ class Simple(Data):
             else:
                 i += 1
         if expression and expression != ")":
-            self.proceed(expression)
+            self.process_variable(expression)
 
     def what_braket(self, expression, braket=0):
         braket = braket
@@ -125,14 +125,21 @@ class Simple(Data):
                     braket -= 1
         return i
 
-    def proceed(self, var):
+    def process_variable(self, var):
         try:
             var = number(var)
         except:
             if var in Data.everything:
                 var = Data.everything[var]
-            elif not self.var or self.var != var:
-                raise ValueError
+            elif self.var in var:
+                if self.var != var:
+                    nb, var = var.split(self.var)[0], self.var
+                    if nb.isdigit():
+                        self.expression.extend((number(nb), "*"))
+                    else:
+                        raise TypeError
+            else:
+                raise TypeError
         self.expression.append(var)
 
     def at_least_one_processed_var(self):

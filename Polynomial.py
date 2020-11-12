@@ -4,20 +4,20 @@ from Data import Data
 
 class Polynomial(Data):
     
-    def __init__(self, variable, equation):       
+    def __init__(self, variable, expression):       
         self.all_terms = {}
-        equation = equation.replace("*", "")
-        equation = equation.replace("^", "")
+        expression = expression.replace("*", "")
+        expression = expression.replace("^", "")
         previous = "+"
-        if equation[0] == "-":
+        if expression[0] == "-":
             previous = "-"
-            equation = equation[1:]
-        for sign in equation:
+            expression = expression[1:]
+        for sign in expression:
             if sign in ("+", "-"):
-                term, equation = equation.split(sign, 1)
+                term, expression = expression.split(sign, 1)
                 self.proceed(term, previous, variable)
                 previous = sign
-        self.proceed(equation, previous, variable)
+        self.proceed(expression, previous, variable)
         #self.get_degree()
 
     def __str__(self):
@@ -64,7 +64,7 @@ class Polynomial(Data):
     
     @classmethod
     def solve(cls):
-        """Solve Linear and Quadratic equations."""
+        """Solve Linear and Quadratic expressions."""
 
         if cls.degree > 2:
             sys.exit("The polynomial degree is strictly greater than 2, I can't solve.")

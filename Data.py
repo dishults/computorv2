@@ -23,5 +23,5 @@ class Data:
     @classmethod
     def calculate(cls, func, var):
         obj = cls.everything[func]
-        res = obj.calculate_with_variable(var, obj.equation[:])
+        res = obj.calculate_with_variable(var, obj.expression[:])
         return res

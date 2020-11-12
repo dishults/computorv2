@@ -2,15 +2,17 @@
 
 import sys
 
-from function import save_function, calculate_function
+import function as f
+
 from Number import save_number
 
 from Data import Data
+from Simple import Simple
 from Matrix import Matrix
 
 def get_type(name, rest):
     if "(" in name:
-        save_function(name, rest)
+        f.save_function(name, rest)
     elif "[" in rest:
         Matrix.save_data(name, rest)
     elif "i" in rest:
@@ -21,7 +23,7 @@ def get_type(name, rest):
         try:
             save_number(name, rest)
         except:
-            save_function(name, rest, simple=True)
+            f.save_function(name, rest, simple=True)
 
 def check_input(user_input, allowed_chars):
     for char in user_input:
@@ -41,13 +43,14 @@ def process_input(user_input):
         var, rest = var.split(")", 1)
         if (rest and not rest.endswith("?")):
             raise SyntaxError
+        var = f.check_if_variable_is_expression(var)
         res = Data.calculate(func, var)
         print(" ", res)
     elif user_input:
         try:
             Data.show(user_input)
         except:
-            res = calculate_function(user_input)
+            res = f.calculate_function(user_input)
             print(" ", res)
 
 
@@ -63,7 +66,6 @@ def main():
 
 
 def test_main():
-    process_input("f(x) = 2 + x")
     process_input(sys.argv[1])
     
     #try: process_input(sys.argv[1])

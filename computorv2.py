@@ -11,6 +11,7 @@ from Simple import Simple
 from Matrix import Matrix
 
 def get_type(name, rest):
+    check_name(name)
     if "(" in name:
         f.save_function(name, rest)
     elif "[" in rest:
@@ -25,6 +26,12 @@ def get_type(name, rest):
         except:
             f.save_function(name, rest, simple=True)
 
+def check_name(name):
+    for char in ".,*/%+-^()[;]=?0123456789":
+        name = name.replace(char, "")
+    if not name:
+        raise SyntaxError
+
 def check_input(user_input, allowed_chars):
     for char in user_input:
         if not char.isalnum() and not char in allowed_chars:
@@ -37,22 +44,14 @@ def process_input(user_input):
     if "=" in user_input and not user_input.endswith("?"):
         name, rest = user_input.split("=")
         check_input(name, (".,*/%+-^()[;]"))
-        get_type(name, rest)
-    elif "(" in user_input:
-        func, var = user_input.split("(")
-        var, rest = var.split(")", 1)
-        if (rest and not rest.endswith("?")):
-            raise SyntaxError
-        var = f.check_if_variable_is_expression(var)
-        res = Data.calculate(func, var)
-        print(" ", res)
-    elif user_input:
+        return get_type(name, rest)
+    elif "(" not in user_input:
         try:
-            Data.show(user_input)
+            return Data.show(user_input)            
         except:
-            res = f.calculate_function(user_input)
-            print(" ", res)
-
+            pass
+    res = f.calculate_function(user_input)
+    print(" ", res)
 
 def main():
     while True:
@@ -71,7 +70,6 @@ def try_run():
 def test_main():
     process_input(sys.argv[1])
     #try_run()
-    
 
 if __name__ == "__main__":
     try:

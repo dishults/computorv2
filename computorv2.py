@@ -33,10 +33,10 @@ def check_input(user_input, allowed_chars):
 def process_input(user_input):
     user_input = user_input.lower()
     user_input = user_input.replace(" ", "")
-    check_input(user_input, (".,*/%+-()[;]^=?"))
+    check_input(user_input, (".,*/%+-^()[;]=?"))
     if "=" in user_input and not user_input.endswith("?"):
         name, rest = user_input.split("=")
-        check_input(name, (".,*/%+-()[;]"))
+        check_input(name, (".,*/%+-^()[;]"))
         get_type(name, rest)
     elif "(" in user_input:
         func, var = user_input.split("(")
@@ -64,12 +64,14 @@ def main():
         except:
             print("Wrong input")
 
+def try_run():
+    try: process_input(sys.argv[1])
+    except: pass
 
 def test_main():
     process_input(sys.argv[1])
+    #try_run()
     
-    #try: process_input(sys.argv[1])
-    #except: pass
 
 if __name__ == "__main__":
     try:

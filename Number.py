@@ -14,6 +14,13 @@ class Number(Data):
             number = int(number)
         return number
 
+    def __lt__(self, other):
+        return self.number < other
+
+    def __gt__(self, other):
+        return self.number > other
+
+
     def __mod__(self, other):
         return self.number % other
 
@@ -23,8 +30,13 @@ class Number(Data):
     def __add__(self, other):        
         return self.number + other
     
-    def __sub__(self, other):        
+    def __sub__(self, other):     
+        if self.number < 0 and other < 0:
+            return self.number + other
         return self.number - other
+
+    def __pow__(self, other):        
+        return self.number ** other
 
 
     def __rtruediv__(self, other):
@@ -42,11 +54,15 @@ class Number(Data):
     def __rsub__(self, other):
         return other - self.number
 
+    def __rpow__(self, other):
+        return other ** self.number
+
 
     operations = {
         "/" : __truediv__,
         "%" : __mod__,
         "*" : __mul__,
+        "^" : __pow__,
         "+" : __add__,
         "-" : __sub__,
     }

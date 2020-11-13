@@ -2,7 +2,7 @@ from Simple import Simple
 from Polynomial import Polynomial
 
 def function(name, var, expression):
-    if "^" in expression:
+    if "^" in expression and not "(" in expression:
         Polynomial.save_data([name, var], expression)
     else:
         Simple.save_data([name, var], expression)

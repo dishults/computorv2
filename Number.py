@@ -167,6 +167,6 @@ def number(number):
 def save_number(name, number):
     try:
         assert "i" in number
-        Complex.save_data(name, number)
+        return Complex.save_data(name, number)
     except:
-        Rational.save_data(name, number)
+        return Rational.save_data(name, number)

@@ -13,18 +13,18 @@ from Matrix import Matrix
 def get_type(name, rest):
     check_name(name)
     if "(" in name:
-        f.save_function(name, rest)
+        return f.save_function(name, rest)
     elif "[" in rest:
-        Matrix.save_data(name, rest)
+        return Matrix.save_data(name, rest)
     elif "i" in rest:
-        save_number(name, rest)
+        return save_number(name, rest)
     elif rest in Data.everything:
-        Data.reassign(name, rest)
+        return Data.reassign(name, rest)
     else:
         try:
-            save_number(name, rest)
+            return save_number(name, rest)
         except:
-            f.save_function(name, rest, simple=True)
+            return f.save_function(name, rest, simple=True)
 
 def check_name(name):
     for char in ".,*/%+-^()[;]=?0123456789":
@@ -47,11 +47,10 @@ def process_input(user_input):
         return get_type(name, rest)
     elif "(" not in user_input:
         try:
-            return Data.show(user_input)            
+            return Data.show(user_input)
         except:
             pass
-    res = f.calculate_function(user_input)
-    print(" ", res)
+    return f.calculate_function(user_input)
 
 def main():
     while True:
@@ -59,16 +58,18 @@ def main():
         if user_input == "exit" or user_input == "quit":
             raise KeyboardInterrupt
         try:
-            process_input(user_input)
+            print(" ", process_input(user_input))
         except:
             print("Wrong input")
 
 def try_run():
-    try: process_input(sys.argv[1])
+    try: print(" ", process_input(sys.argv[1]))
     except: pass
 
 def test_main():
-    process_input(sys.argv[1])
+    print(" ", process_input("funA(x) = x^2 + 2x + 1"))
+    print(" ", process_input("y = 0"))
+    print(" ", process_input(sys.argv[1]))
     #try_run()
 
 if __name__ == "__main__":

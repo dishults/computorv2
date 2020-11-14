@@ -4,7 +4,7 @@ from Data import Data
 
 class Polynomial(Data):
     
-    def __init__(self, variable, expression):       
+    def __init__(self, variable, expression):
         self.all_terms = {}
         expression = expression.replace("*", "")
         expression = expression.replace("^", "")
@@ -18,7 +18,7 @@ class Polynomial(Data):
                 self.proceed(term, previous, variable)
                 previous = sign
         self.proceed(expression, previous, variable)
-        #self.get_degree()
+        self.get_degree()
 
     def __str__(self):
         p = ""
@@ -62,58 +62,65 @@ class Polynomial(Data):
         except:
             self.degree = 0
     
-    @classmethod
-    def solve(cls):
+    def solve(self):
         """Solve Linear and Quadratic expressions."""
 
-        if cls.degree > 2:
-            sys.exit("The polynomial degree is strictly greater than 2, I can't solve.")
+        if self.degree > 2:
+            return("The polynomial degree is strictly greater than 2, I can't solve.")
         
-        if cls.degree == 0:
-            """n * X^0 = 0"""            
-            n = all_terms[0].coefficient
+        elif self.degree == 0:
+            n = self.all_terms[0].coefficient
             if n != 0:
-                sys.exit("The eqution has no solution")
-            print("Every real number is a solution")
+                return("The eqution has no solution")
+            return("Every real number is a solution")
 
-        elif cls.degree == 1:
-            print("b * X^0 + a * X^1 = 0")
-            a = all_terms[1].coefficient
-            b = all_terms[0].coefficient
-            print("\nLinear Formula:")
-            print(linear_formula.__doc__)
-            print("a = ", a)
-            print("b = ", b)
-            linear_formula(a, b)
+        elif self.degree == 1:
+            a = self.all_terms[1].coefficient
+            b = self.all_terms[0].coefficient
+            return linear_formula(a, b)
 
-        elif cls.degree == 2:
-            print("c * X^0 + b * X^1 + a * X^2 = 0")
-            a = all_terms[2].coefficient
-            b = all_terms[1].coefficient
-            c = all_terms[0].coefficient
+        elif self.degree == 2:
+            a = self.all_terms[2].coefficient
+            b = self.all_terms[1].coefficient
+            c = self.all_terms[0].coefficient
             discriminant = (b ** 2) - (4 * a * c)
             two_a = 2 * a
-
-            print("\nQuadratic Formula:")
-            print(quadratic_formula.__doc__)
-            print("a = ", a)
-            print("b = ", b)
-            print("c = ", c)
-            print("2a = ", two_a)
-            print("discriminant (b^2 - 4ac) = ", discriminant)
             if discriminant == 0:
-                print("\n\033[1mDiscriminant is 0\033[0m")
-                print("To solve we would have to do: x = -b / 2a")
-                linear_formula(two_a, b)
+                return linear_formula(two_a, b)
             else:
                 if discriminant > 0:
-                    print("\n\033[1mDiscriminant is strictly positive.\033[0m")
-                    quadratic_formula(two_a, b, discriminant)
+                    return quadratic_formula(two_a, b, discriminant)
                 else:
-                    print("\n\033[1mDiscriminant is strictly negative.\033[0m",
-                          "\nSo we would have to calculate complex solutions",
-                          "with real and imaginary parts")
-                    quadratic_formula(two_a, b, discriminant, simple=False)
+                    return quadratic_formula(two_a, b, discriminant, simple=False)
+
+    @staticmethod
+    def calculate(expression, rest):
+        i = expression.index("(")
+        braket = Polynomial.what_braket(expression, -1)
+        func = expression[:i]
+        var = expression[i+1:braket]
+        #expression = expression[braket+1:]
+        obj = Data.everything[func]
+        expression = str(obj)
+        expression = expression.replace(" ", "")
+        copy = Polynomial(var, expression)
+        res = str(copy) + " = 0\n  "
+        #add terms from rest
+        return res + copy.solve()
+        #res = Data.calculate(func, var)
+
+    @staticmethod
+    def what_braket(expression, braket=0):
+        braket = braket
+        for i, char in enumerate(expression):
+            if char == "(":
+                braket += 1
+            elif char == ")":
+                if not braket:
+                    break
+                else:
+                    braket -= 1
+        return i
 
 
 def linear_formula(a, b):
@@ -121,15 +128,15 @@ def linear_formula(a, b):
     x = -b / a
     """
 
-    print("\nThe solution is:")
+    res = "The solution is:\n"
     if b == 0 and a == 0:
-        print("Every real number is a solution")
+        return res + "  Every real number is a solution"
     elif a == 0:
-        sys.exit("The eqution has no solution")
+        return res + "  The eqution has no solution"
     elif b == 0:
-        print(0)
+        return res + "  0"
     else:
-        print(f"\033[1m{-b / a}\033[0m")
+        return res + f"  {-b / a}"
     
 def quadratic_formula(two_a, b, discriminant, simple=True):
     """
@@ -139,29 +146,27 @@ def quadratic_formula(two_a, b, discriminant, simple=True):
     """
     if simple:
         sqrt = discriminant ** 0.5
-        print("sqrt (discriminant ** 0.5) =", sqrt)
         x1 = (-b - sqrt) / two_a
         x2 = (-b + sqrt) / two_a
-        print("\nThe two solutions are:")
-        print("x1 (-b - sqrt) / 2a =\033[1m", round(x1, 6), "\033[0m")
-        print("x2 (-b + sqrt) / 2a =\033[1m", round(x2, 6), "\033[0m")
+        res = "The two R solutions are:\n"
+        res += f"  {round(x1, 6)}\n"
+        res += f"  {round(x2, 6)}"
     else:
         discriminant *= -1
-        print(f"\n=> convert discriminant (b^2 - 4ac) to positive = {discriminant}")
         sqrt = discriminant ** 0.5
-        print("=> calculate sqrt (discriminant ** 0.5) =", sqrt)
         real = -b / two_a
-        print("=> calculate real part (-b / two_a) = ", real)
         imaginary = sqrt / two_a
-        print("=> calculate imaginary part (sqrt / 2a) = ", imaginary)
-        print("\nThe two complex solutions are:")
-        print(f"real - imaginary = \033[1m{round(real, 6)} - {round(imaginary, 6)}i\033[0m")
-        print(f"real + imaginary = \033[1m{round(real, 6)} + {round(imaginary, 6)}i\033[0m")
+        res = "The two C solutions are:\n"
+        res += f"  {round(real, 6)} - {round(imaginary, 6)}i\n"
+        res += f"  {round(real, 6)} + {round(imaginary, 6)}i"
+    return res
 
 class Terms:
 
     def __init__(self, sign, coefficient, variable, exponent, inverse=False):
         """Example -- '+', '5', 'X', '0'"""
+        if not coefficient:
+            coefficient = "1"
         try:
             self.coefficient = float(sign + coefficient)
         except:
@@ -176,8 +181,14 @@ class Terms:
         if num % 1 == 0:
             num = int(num)
         if self.exponent > 1:
-            return f"{num} * {self.variable}^{self.exponent}"
+            if num == 1:
+                return f"{self.variable}^{self.exponent}"
+            else:
+                return f"{num} * {self.variable}^{self.exponent}"
         elif self.exponent == 1:
-            return f"{num}*{self.variable}"
+            if num == 1:
+                return f"{self.variable}"
+            else:
+                return f"{num}{self.variable}"
         elif self.exponent == 0:
             return f"{num}"

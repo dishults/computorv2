@@ -9,16 +9,16 @@ class Data:
         else:
             obj = cls(rest)
         cls.everything[name] = obj
-        cls.show(name)
+        return cls.show(name)
     
     @classmethod
     def show(cls, name):
-        print(" ", cls.everything[name])
+        return cls.everything[name]
     
     @classmethod
     def reassign(cls, where, what):
         cls.everything[where] = cls.everything[what]
-        cls.show(where)
+        return cls.show(where)
 
     @classmethod
     def calculate(cls, func, var):

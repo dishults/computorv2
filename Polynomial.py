@@ -4,7 +4,7 @@ from Data import Data
 
 class Polynomial(Data):
     
-    def __init__(self, variable, expression):
+    def __init__(self, variable, expression, inverse=False):
         self.all_terms = {}
         expression = expression.replace("*", "")
         expression = expression.replace("^", "")
@@ -15,9 +15,9 @@ class Polynomial(Data):
         for sign in expression:
             if sign in ("+", "-"):
                 term, expression = expression.split(sign, 1)
-                self.proceed(term, previous, variable)
+                self.proceed(term, previous, variable, inverse)
                 previous = sign
-        self.proceed(expression, previous, variable)
+        self.proceed(expression, previous, variable, inverse)
         self.get_degree()
 
     def __str__(self):
@@ -26,17 +26,31 @@ class Polynomial(Data):
         term = self.all_terms[terms_in_reverse__order[0]]
         if term.coefficient < 0:
             p += "-"
-        p += str(term)
+        if term.exponent > 0 and term.coefficient != 0:
+            p += str(term)
         for t in terms_in_reverse__order[1:]:
             term = self.all_terms[t]
             if term.coefficient > 0:
-                sign = " +"
-            else:
-                sign = " -"
-            p += f"{sign} {term}"
+                p += f" + {term}"
+            elif term.coefficient < 0:
+                p += f" - {term}"
+        if p.startswith(" +"):
+            return p.strip(" +")
+        elif p.startswith(" -"):
+            return "-" + p.strip(" - ")
         return p
 
-    def proceed(self, term, sign, variable):
+    def __isub__(self, other):
+        for term in other.all_terms:
+            if term in self.all_terms:
+                self.all_terms[term].coefficient += other.all_terms[term].coefficient
+                if term > 2 and self.all_terms[term].coefficient == 0:
+                    del self.all_terms[term]
+            else:
+                self.all_terms[term] = other.all_terms[term].coefficient
+        return self
+
+    def proceed(self, term, sign, variable, inverse=False):
         try: # 5x^2
             coefficient, exponent = term.split(variable) 
             assert exponent
@@ -46,10 +60,10 @@ class Polynomial(Data):
         except ValueError: # 5
             coefficient = term
             exponent = 0
-        term = Terms(sign, coefficient, variable, exponent)
+        term = Terms(sign, coefficient, variable, exponent, inverse)
         if term.exponent in self.all_terms:
             self.all_terms[term.exponent].coefficient += term.coefficient
-            if self.all_terms[term.exponent].coefficient == 0:
+            if term.exponent > 0 and self.all_terms[term.exponent].coefficient == 0:
                 del self.all_terms[term.exponent]
         else:
             self.all_terms[term.exponent] = term
@@ -66,13 +80,13 @@ class Polynomial(Data):
         """Solve Linear and Quadratic expressions."""
 
         if self.degree > 2:
-            return("The polynomial degree is strictly greater than 2, I can't solve.")
+            return"The polynomial degree is strictly greater than 2, I can't solve."
         
         elif self.degree == 0:
             n = self.all_terms[0].coefficient
             if n != 0:
-                return("The eqution has no solution")
-            return("Every real number is a solution")
+                return"The eqution has no solution"
+            return"Every real number is a solution"
 
         elif self.degree == 1:
             a = self.all_terms[1].coefficient
@@ -99,15 +113,13 @@ class Polynomial(Data):
         braket = Polynomial.what_braket(expression, -1)
         func = expression[:i]
         var = expression[i+1:braket]
-        #expression = expression[braket+1:]
-        obj = Data.everything[func]
-        expression = str(obj)
-        expression = expression.replace(" ", "")
-        copy = Polynomial(var, expression)
-        res = str(copy) + " = 0\n  "
-        #add terms from rest
-        return res + copy.solve()
-        #res = Data.calculate(func, var)
+
+        original = str(Data.everything[func])
+        original = original.replace(" ", "")
+        copy = Polynomial(var, original)
+        rest = Polynomial(var, rest, inverse=True)
+        copy -= rest
+        return str(copy) + " = 0\n  " + copy.solve()
 
     @staticmethod
     def what_braket(expression, braket=0):
@@ -144,7 +156,9 @@ def quadratic_formula(two_a, b, discriminant, simple=True):
     x = —————————————————————
                 2a
     """
-    if simple:
+    if two_a == 0:
+        return "The eqution has no solution"
+    elif simple:
         sqrt = discriminant ** 0.5
         x1 = (-b - sqrt) / two_a
         x2 = (-b + sqrt) / two_a

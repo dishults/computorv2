@@ -36,14 +36,18 @@ class Tests(unittest.TestCase):
         for test in tests:
             res = process_input(test)
             self.assertEqual(str(res), tests[test])
-"""
+
     def test_polynomials(self):
         tests = {
-            "":   "",
-        }
+            "f(x) = x^2 + 2x + 1":"x^2 + 2x + 1",
+            "f(x) = 2 ?":         "x^2 + 2x - 1 = 0\n  The two R solutions are:\n  -2.414214\n  0.414214",
+            "f(x) = 3x + 2 ?":    "x^2 - x - 1 = 0\n  The two R solutions are:\n  -0.618034\n  1.618034",
+            "f(x) = 2x + 2 ?":    "x^2 - 1 = 0\n  The two R solutions are:\n  -1.0\n  1.0",
+            "f(x) = x^2 + 1 ?":   "2x = 0\n  The eqution has no solution",
+        }#add tests from computorv1
         for test in tests:
             res = process_input(test)
             self.assertEqual(str(res), tests[test])
-"""
+
 if __name__ == "__main__":
     unittest.main()

@@ -64,18 +64,6 @@ class Simple(Math, Variable, Data):
         if expression and expression != ")":
             self.process_variable(expression)
 
-    def what_braket(self, expression, braket=0):
-        braket = braket
-        for i, char in enumerate(expression):
-            if char == "(":
-                braket += 1
-            elif char == ")":
-                if not braket:
-                    break
-                else:
-                    braket -= 1
-        return i
-
     def calculate_with_variable(self, var, expression):
         negative_var = "-" + self.var
         if isinstance(var, Data):
@@ -94,3 +82,16 @@ class Simple(Math, Variable, Data):
                 if isinstance(v, Simple):
                     expression[i] = v.calculate_with_variable(var, v.expression[:])
         return self.calculate(expression)
+
+    @staticmethod
+    def what_braket(expression, braket=0):
+        braket = braket
+        for i, char in enumerate(expression):
+            if char == "(":
+                braket += 1
+            elif char == ")":
+                if not braket:
+                    break
+                else:
+                    braket -= 1
+        return i

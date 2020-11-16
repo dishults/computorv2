@@ -44,6 +44,9 @@ class Tests(unittest.TestCase):
             "f(x) = 3x + 2 ?":    "x^2 - x - 1 = 0\n  The two R solutions are:\n  -0.618034\n  1.618034",
             "f(x) = 2x + 2 ?":    "x^2 - 1 = 0\n  The two R solutions are:\n  -1.0\n  1.0",
             "f(x) = x^2 + 1 ?":   "2x = 0\n  The eqution has no solution",
+            "f(2) = ?":           "9",
+            "f(2) = 2 ?":         "7 = 0\n  The eqution has no solution",
+            "f(2) = 9 ?":         "0 = 0\n  Every real number is a solution",
         }#add tests from computorv1
         for test in tests:
             res = process_input(test)

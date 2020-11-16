@@ -1,11 +1,13 @@
 import sys
 
 from Data import Data
+from Simple import Simple
 
 class Polynomial(Data):
     
     def __init__(self, variable, expression, inverse=False):
         self.all_terms = {}
+        self.variable = variable
         expression = expression.replace("*", "")
         expression = expression.replace("^", "")
         previous = "+"
@@ -26,7 +28,7 @@ class Polynomial(Data):
         term = self.all_terms[terms_in_reverse__order[0]]
         if term.coefficient < 0:
             p += "-"
-        if term.exponent > 0 and term.coefficient != 0:
+        if term.exponent >= 0 and term.coefficient != 0:
             p += str(term)
         for t in terms_in_reverse__order[1:]:
             term = self.all_terms[t]
@@ -38,6 +40,8 @@ class Polynomial(Data):
             return p.strip(" +")
         elif p.startswith(" -"):
             return "-" + p.strip(" - ")
+        if not p:
+            return "0"
         return p
 
     def __isub__(self, other):
@@ -116,6 +120,15 @@ class Polynomial(Data):
 
         original = str(Data.everything[func])
         original = original.replace(" ", "")
+        if var.isdigit():
+            num = var
+            var = Data.everything[func].variable
+            copy = Simple(var, original)
+            res = copy.calculate_with_variable(num, copy.expression)
+            if not rest:
+                return res
+            original = str(res)
+
         copy = Polynomial(var, original)
         rest = Polynomial(var, rest, inverse=True)
         copy -= rest

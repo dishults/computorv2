@@ -67,8 +67,7 @@ def try_run():
     except: pass
 
 def test_main():
-    #print(" ", process_input("f(x) = x^2 + 2x + 1"))
-    #print(" ", process_input("f(2) = ?"))
+    #print(" ", process_input("v = 2^2"))
     print(" ", process_input(sys.argv[1]))
     #try_run()
 

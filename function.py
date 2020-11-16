@@ -9,7 +9,7 @@ def function(name, var, expression):
 
 def save_function(name, rest, simple=False):
     if simple:
-        return function(name, 0, rest)
+        return Simple.save_data([name, 0], rest)
     else:
         name, var = name.split("(")
         var = var.strip("()")

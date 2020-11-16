@@ -32,6 +32,7 @@ class Tests(unittest.TestCase):
             "v = (1 + 2)^2":                                "9",
             "funB(x) = 4 -5 + (x + 2)^2 - 4":               "(x + 2) ^ 2 - 5",
             "funB(x) = 4 -5 + (x + 2)^2 - 4 + (x * 2) + 7": "(x + 2) ^ 2 + (x * 2) + 2",
+            "v = 2^2":                                      "4",
         }
         for test in tests:
             res = process_input(test)

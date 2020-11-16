@@ -181,10 +181,13 @@ class Terms:
         """Example -- '+', '5', 'X', '0'"""
         if not coefficient:
             coefficient = "1"
-        try:
-            self.coefficient = float(sign + coefficient)
-        except:
-            self.coefficient = float(coefficient)
+        if not coefficient.isdigit():
+            self.coefficient = Data.everything[coefficient]
+        else:
+            try:
+                self.coefficient = float(sign + coefficient)
+            except:
+                self.coefficient = float(coefficient)
         self.variable = variable
         self.exponent = int(exponent)
         if inverse:

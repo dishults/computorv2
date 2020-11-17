@@ -27,6 +27,12 @@ class Tests(unittest.TestCase):
             ["a = (2 + (3 * 5)) + 1",    "18"],
         ])
 
+    def test_computation(self):
+        self.do([
+            ["a = 2",   "2"],
+            ["a + 2 ?", "4"],
+        ])
+
     def test_image_computation(self):
         self.do([
             ["varA = 2 + 4 *2 - 5 %4 + 2 * (4 + 5)",         "27"],

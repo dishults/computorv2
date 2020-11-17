@@ -3,7 +3,7 @@ from Number import Number, number
 from SMPL.Math import Math
 from SMPL.Variable import Variable
 
-class Simple(Math, Variable, Data):
+class Simple(Math, Variable):
 
     def __init__(self, variable, expression, sub_expression=False):
         self.expression = []
@@ -59,32 +59,13 @@ class Simple(Math, Variable, Data):
                     func = expression[:i]
                     var = expression[i+1:braket]
                     expression = expression[braket+1:]
-                    res = Data.calculate(func, var)
+                    res = self.calculate_function_with_variable(func, var)
                 self.expression.append(res)
                 i = 0
             else:
                 i += 1
         if expression and expression != ")":
             self.process_variable(expression)
-
-    def calculate_with_variable(self, var, expression):
-        negative_var = "-" + self.var
-        if isinstance(var, Data):
-            new_var = var
-        elif var in Data.everything:
-            new_var = Data.everything[var]
-        else:
-            new_var = number(var) #get_type()
-        for i, v in enumerate(expression):
-            if v == self.var:
-                expression[i] = new_var
-            elif v == negative_var:
-                expression[i] = -new_var
-            elif isinstance(v, Data):
-                v.reserved = False
-                if isinstance(v, Simple):
-                    expression[i] = v.calculate_with_variable(var, v.expression[:])
-        return self.calculate(expression)
 
     @staticmethod
     def what_braket(expression, braket=0):

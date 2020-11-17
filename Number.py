@@ -1,5 +1,3 @@
-from abc import abstractmethod
-
 from Data import Data
 
 class Number(Data):
@@ -7,72 +5,6 @@ class Number(Data):
     def __init__(self, number):
         self.number = self.convert_to_num(number)
         self.reserved = False
-
-    def __truediv__(self, other):
-        number = self.number / other
-        if number * 10 % 10 == 0:
-            number = int(number)
-        return number
-
-    def __lt__(self, other):
-        return self.number < other
-
-    def __gt__(self, other):
-        return self.number > other
-
-
-    def __mod__(self, other):
-        if self.number < 0:
-            return abs(self.number) % other * -1
-        return self.number % other
-
-    def __mul__(self, other):        
-        return self.number * other
-
-    def __add__(self, other):        
-        return self.number + other
-    
-    def __sub__(self, other):     
-        return self.__add__(other)
-
-    def __pow__(self, other):        
-        return self.number ** other
-
-
-    def __rtruediv__(self, other):
-        return other / self.number
-
-    def __rmod__(self, other):
-        return other % self.number
-
-    def __rmul__(self, other):
-        return other * self.number
-
-    def __radd__(self, other):
-        return other + self.number
-
-    def __rsub__(self, other):
-        return other - self.number
-
-    def __rpow__(self, other):
-        return other ** self.number
-
-
-    operations = {
-        "/" : __truediv__,
-        "%" : __mod__,
-        "*" : __mul__,
-        "^" : __pow__,
-        "+" : __add__,
-        "-" : __sub__,
-    }
-
-    @abstractmethod
-    def math(self, sign, other):
-        pass
-
-    def __neg__(self):
-        return self.math("*", -1)
 
     @staticmethod
     def convert_to_num(number):
@@ -91,6 +23,9 @@ class Rational(Number):
 
     def math(self, sign, other):
         return Rational(self.operations[sign](self, other))
+    
+    def this(self):
+        return self.number
 
 
 class Complex(Number):

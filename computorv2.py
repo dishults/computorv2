@@ -70,6 +70,7 @@ def try_run():
     except: pass
 
 def test_main():
+    print(" ", process_input("a = 2"))
     print(" ", process_input(sys.argv[1]))
     #try_run()
 

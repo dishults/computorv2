@@ -125,11 +125,11 @@ class Polynomial(Data):
         func = expression[:i]
         var = expression[i+1:braket]
         original = Data.everything[func]
+        expression = str(original)
 
         if var == original.variable and rest == "0":
-            return str(original) + " = 0\n  " + original.solve()
+            return expression + " = 0\n  " + original.solve()
 
-        expression = str(original)
         expression = expression.replace(" ", "")
         if var.isdigit():
             num = var

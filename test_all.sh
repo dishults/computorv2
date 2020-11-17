@@ -4,6 +4,7 @@ TESTS=(
 "test_subject_examples"
 "test_assignments"
 "test_calculations"
+"test_errors"
 )
 
 green="\033[32m"

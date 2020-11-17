@@ -16,5 +16,13 @@ class Tests(unittest.TestCase):
             "f(x) = 2 * &",
         ])
 
+    def test_computation(self):
+        process_input("a = 2")
+        self.do([
+            "a + 2 = 2 ?",
+            "a + 2 &",
+            "a + 2 !",
+        ])
+
 if __name__ == "__main__":
     unittest.main()

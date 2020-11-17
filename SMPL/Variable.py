@@ -1,13 +1,11 @@
-from abc import abstractmethod
 
 from Data import Data
 from Number import number
 
 class Variable:
 
-    @abstractmethod
     def abstract(self):
-        self.expression = None
+        self.expression = []
         self.var = 0
         self.sub_expression = None
 
@@ -16,12 +14,15 @@ class Variable:
             var = number(var)
         except:
             if self.var and self.var in var:
+                # 4x
                 if self.var != var:
                     nb, var = var.split(self.var)[0], self.var
-                    if nb.isdigit():
+                    # 4, x
+                    if nb.isdigit() and self.var == var:
                         self.expression.extend((number(nb), "*"))
                     else:
                         raise TypeError
+                # x in ()
                 if self.sub_expression:
                     self.reserved = True
             elif var in Data.everything:
@@ -48,6 +49,7 @@ class Variable:
                     return i
             i += 1
         return -1
+
 
     def get_first(self, i, j=0):
         self.expression.pop(i)

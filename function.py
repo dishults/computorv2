@@ -17,12 +17,12 @@ def save_function(name, rest, simple=False):
             raise SyntaxError
         return function(name, var, rest)
 
-def calculate_function(expression):
+def calculate_function(expression, rest=None):
+    expression = expression.strip("?")
     if "=" in expression:
         expression, rest = expression.split("=")
-    expression = expression.strip("?")
-    rest = rest.strip("?")
     try:
+        assert not rest
         obj = Simple(0, expression)
         return obj.expression[0]
     except:

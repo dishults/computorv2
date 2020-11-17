@@ -29,21 +29,24 @@ def get_type(name, rest):
 def check_name(name):
     for char in ".,*/%+-^()[;]=?0123456789":
         name = name.replace(char, "")
-    if not name:
+    if not name or name == "i":
         raise SyntaxError
 
 def check_input(user_input, allowed_chars):
     for char in user_input:
-        if not char.isalnum() and not char in allowed_chars:
+        if not char.isalpha() and not char in allowed_chars:
+            if "(" in user_input:
+                if char.isdigit() or char in ".,*/%+-^()[;]":
+                    continue
             raise SyntaxError
 
 def process_input(user_input):
     user_input = user_input.lower()
     user_input = user_input.replace(" ", "")
-    check_input(user_input, (".,*/%+-^()[;]=?"))
+    check_input(user_input, (".,*/%+-^()[;]=?0123456789"))
     if "=" in user_input and not user_input.endswith("?"):
         name, rest = user_input.split("=")
-        check_input(name, (".,*/%+-^()[;]"))
+        check_input(name, "")
         return get_type(name, rest)
     elif "(" not in user_input:
         try:
@@ -67,7 +70,6 @@ def try_run():
     except: pass
 
 def test_main():
-    print(" ", process_input("f(x) = 5 + 4 * X + X^2"))
     print(" ", process_input(sys.argv[1]))
     #try_run()
 

@@ -76,6 +76,21 @@ class Tests(unittest.TestCase):
             ["funA(x) = y ?",            "x^2 + 2x + 1 = 0\n  The R solution is:\n  -1.0"],
         ])
 
+    def test_syntax(self):
+        self.do([
+            ["varA = 2",                                "2"],
+            ["varB= 2 * (4 + varA + 3)",                "18"],
+            ["varC =2 * varB",                          "36"],
+            ["varD    =      2 *(2 + 4 *varC -4 /3)",   "289.3333333333333"],
+            ["matA = [[1,2];[3,2];[3,4]]",
+                "[ 1 , 2 ]\n  [ 3 , 2 ]\n  [ 3 , 4 ]"],
+            ["matB= [[1,2]]",                           "[ 1 , 2 ]"],
+            ["funA(b) = 2*b+b",                         "2 * b + b"],
+            ["funB(a)   =2 * a",                        "2 * a"],
+            ["funC(y) =2* y + 4 -2 * 4+1/3",            "2 * y - 3.6666666666666665"],
+            ["funD(x)   =   2 *x",                      "2 * x"],
+        ])
+
 
 if __name__ == "__main__":
     unittest.main()

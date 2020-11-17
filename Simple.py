@@ -22,7 +22,8 @@ class Simple(Math, Variable, Data):
             else:
                 self.expression[0] = "-" + self.expression[0]
         self.calculate(self.expression)
-        self.calculate_all_unreserved_vars()
+        if len(self.expression) > 1:
+            self.calculate_all_unreserved_vars()
         if not self.at_least_one_processed_var():
             raise SyntaxError
 
@@ -32,6 +33,8 @@ class Simple(Math, Variable, Data):
             f += f" {e}"
         if self.sub_expression:
             f = "(" + f + ")"
+        f = f.replace("+ -", "- ")
+        f = f.replace("- -", "- ")
         return f
 
     def get_variables(self, expression):

@@ -14,6 +14,8 @@ class Math:
         return self.expression[0] / other
 
     def __mod__(self, other):
+        if self.expression[0] < 0:
+            return abs(self.expression[0]) % other * -1
         return self.expression[0] % other
 
     def __mul__(self, other):
@@ -23,9 +25,7 @@ class Math:
         return self.expression[0] + other
 
     def __sub__(self, other):
-        if self.expression[0] < 0 and other < 0:
-            return self.expression[0] + other
-        return self.expression[0] - other
+        return self.__add__(other)
 
     def __pow__(self, other):
         return self.expression[0] ** other
@@ -94,10 +94,12 @@ class Math:
             sign = expression[i]
             if sign in ("/", "%", "*", "^"):
                 if type(expression[i-1]) == str or expression[i-1].reserved:
-                    expression[i+1].reserved = True
+                    if type(expression[i+1]) != str:
+                        expression[i+1].reserved = True
                     i += 1
                 elif type(expression[i+1]) == str or expression[i+1].reserved:
-                    expression[i-1].reserved = True
+                    if type(expression[i-1]) != str:
+                        expression[i-1].reserved = True
                     i += 1
                 else:
                     expression.pop(i)

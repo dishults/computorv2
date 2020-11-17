@@ -22,6 +22,8 @@ class Number(Data):
 
 
     def __mod__(self, other):
+        if self.number < 0:
+            return abs(self.number) % other * -1
         return self.number % other
 
     def __mul__(self, other):        
@@ -31,9 +33,7 @@ class Number(Data):
         return self.number + other
     
     def __sub__(self, other):     
-        if self.number < 0 and other < 0:
-            return self.number + other
-        return self.number - other
+        return self.__add__(other)
 
     def __pow__(self, other):        
         return self.number ** other

@@ -131,7 +131,7 @@ class Polynomial(Data):
             return expression + " = 0\n  " + original.solve()
 
         expression = expression.replace(" ", "")
-        if var.isdigit():
+        if Data.is_number(var):
             num = var
             var = original.variable
             copy = Simple(var, expression)

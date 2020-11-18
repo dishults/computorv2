@@ -29,8 +29,14 @@ class Tests(unittest.TestCase):
 
     def test_computation(self):
         self.do([
-            ["a = 2",   "2"],
-            ["a + 2 ?", "4"],
+            ["a = 2",                         "2"],
+            ["a + 2 ?",                       "4"],
+            ["fa(x) = 2 + x",                 "2 + x"],
+            ["fb(x) = 3 + x",                 "3 + x"],
+            ["v = 3",                         "3"],
+            ["fa(2) + v + fb(4) + 2 = ?",     "16"],
+            ["fa(2 * 3) = ?",                 "8"],
+            ["fa(2 * 2) + fa(3 * 3) = ?",     "17"],
         ])
 
     def test_image_computation(self):
@@ -56,6 +62,10 @@ class Tests(unittest.TestCase):
             ["f(2) = ?",           "9"],
             ["f(2) = 2 ?",         "7 = 0\n  The eqution has no solution"],
             ["f(2) = 9 ?",         "0 = 0\n  Every real number is a solution"],
+            ["f(x) = -4*x^2 + 3x + 2 ?",
+                "5 * x^2 - x - 1 = 0\n  The two R solutions are:\n  -0.358258\n  0.558258"],
+            ["f(x) = x^2 + 2x + 1 ?",
+                "0 = 0\n  Every real number is a solution"],
         ])
 
     def test_polynomials_computorv1_subject_examples(self):

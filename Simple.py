@@ -7,7 +7,7 @@ class Simple(Math, Variable):
 
     def __init__(self, variable, expression, sub_expression=False):
         self.expression = []
-        self.var = variable
+        self.variable = variable
         self.sub_expression = sub_expression
         self.reserved = False
         self.negative = False
@@ -48,18 +48,11 @@ class Simple(Math, Variable):
                     i = 0
                 self.expression.append(sign)
             elif sign == "(":
-                if expression[0] == "(":
-                    expression = expression[1:]
-                    braket = self.what_braket(expression)
-                    var = expression[:braket]
-                    expression = expression[braket+1:]
-                    res = Simple(self.var, var, sub_expression=True)
-                else:
-                    braket = self.what_braket(expression, -1)
-                    func = expression[:i]
-                    var = expression[i+1:braket]
-                    expression = expression[braket+1:]
+                func, var, expression = self.get_function_and_variable(expression, i)
+                if func:
                     res = self.calculate_function_with_variable(func, var)
+                else:
+                    res = Simple(self.variable, var, sub_expression=True)
                 self.expression.append(res)
                 i = 0
             else:
@@ -79,3 +72,18 @@ class Simple(Math, Variable):
                 else:
                     braket -= 1
         return i
+
+    @staticmethod
+    def get_function_and_variable(expression, i=None, func=0):
+        if "=" in expression:
+            expression = expression.split("=")[0]
+        if i == None:
+            i = expression.index("(")
+        if i:
+            braket = Simple.what_braket(expression, -1)
+            func = expression[:i]
+        else:
+            braket = Simple.what_braket(expression[1:]) + 1
+        var = expression[i+1:braket]
+        expression = expression[braket+1:]
+        return func, var, expression

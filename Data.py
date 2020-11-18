@@ -87,3 +87,16 @@ class Data:
     def reassign(cls, where, what):
         cls.everything[where] = cls.everything[what]
         return cls.show(where)
+
+    @staticmethod
+    def is_number(var):
+        try:
+            return var.isdigit()
+        except:
+            try:
+                return type(float(var)) == float
+            except:
+                try:
+                    return type(int(var)) == int
+                except:
+                    return False

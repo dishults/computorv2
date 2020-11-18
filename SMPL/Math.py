@@ -5,28 +5,19 @@ class Math(Data):
 
     def abstract(self):
         self.expression = []
-        self.var = None
+        self.variable = None
         self.reserved = None
         self.negative = None
 
-    def __neg__(self):
-        if self.reserved:
-            self.negative = True
-            return self
-        else:
-            return super().__neg__()
-
     def math(self, sign, other):
         res = number(self.operations[sign](self, other))
-        if self.negative:
-            return -res
         return res
 
     def this(self):
         return self.expression[0]
 
     def calculate_with_variable(self, var, expression):
-        negative_var = "-" + self.var
+        negative_var = "-" + self.variable
         if isinstance(var, Data):
             new_var = var
         elif var in Data.everything:
@@ -34,7 +25,7 @@ class Math(Data):
         else:
             new_var = number(var) #get_type()
         for i, v in enumerate(expression):
-            if v == self.var:
+            if v == self.variable:
                 expression[i] = new_var
             elif v == negative_var:
                 expression[i] = -new_var

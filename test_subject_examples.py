@@ -54,7 +54,7 @@ class Tests(unittest.TestCase):
             ["varD = funA(varC)",                        "239.5"],
         ])
 
-    def test_question_mark(self):
+    def test_computation(self):
         self.do([
             ["a = 2 * 4 + 4",    "12"],
             ["a + 2 = ?",        "14"],

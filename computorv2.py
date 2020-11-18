@@ -36,7 +36,7 @@ def check_input(user_input, allowed_chars):
     for char in user_input:
         if not char.isalpha() and not char in allowed_chars:
             if "(" in user_input:
-                if char.isdigit() or char in ".,*/%+-^()[;]":
+                if Data.is_number(char) or char in ",*/%+-^()[;]":
                     continue
             raise SyntaxError
 
@@ -70,7 +70,6 @@ def try_run():
     except: pass
 
 def test_main():
-    print(" ", process_input("a = 2"))
     print(" ", process_input(sys.argv[1]))
     #try_run()
 

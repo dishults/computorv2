@@ -1,26 +1,39 @@
+from Data import Data
 from Simple import Simple
 from Polynomial import Polynomial
 
-def function(name, var, expression):
+def function(func, var, expression):
     if "^" in expression and not "(" in expression:
-        return Polynomial.save_data([name, var], expression)
+        return Polynomial.save_data([func, var], expression)
     else:
-        return Simple.save_data([name, var], expression)
+        return Simple.save_data([func, var], expression)
 
-def save_function(name, rest, simple=False):
+def save_function(func, rest, simple=False):
     if simple:
-        return Simple.save_data([name, 0], rest)
+        return Simple.save_data([func, 0], rest)
     else:
-        name, var = name.split("(")
-        var = var.strip("()")
+        func, var = Simple.get_function_and_variable(func)[:2]
         if var == "i":
             raise SyntaxError
-        return function(name, var, rest)
+        return function(func, var, rest)
+
+def process_expressions_in_variables(expression):
+    copy = expression[:]
+    while copy:
+        var, copy = Simple.get_function_and_variable(copy)[1:]
+        new_var = check_if_variable_is_expression(var)
+        if new_var != var:
+            expression = expression.replace(f"({var})", f"({new_var})")
+        else:
+            break
+    return expression
 
 def calculate_function(expression, rest=None):
     expression = expression.strip("?")
     if "=" in expression:
         expression, rest = expression.split("=")
+    if "(" in expression:
+        expression = process_expressions_in_variables(expression)
     try:
         assert not rest
         obj = Simple(0, expression)

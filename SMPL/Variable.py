@@ -6,19 +6,19 @@ class Variable:
 
     def abstract(self):
         self.expression = []
-        self.var = 0
+        self.variable = 0
         self.sub_expression = None
 
     def process_variable(self, var):
         try:
             var = number(var)
         except:
-            if self.var and self.var in var:
+            if self.variable and self.variable in var:
                 # 4x
-                if self.var != var:
-                    nb, var = var.split(self.var)[0], self.var
+                if self.variable != var:
+                    nb, var = var.split(self.variable)[0], self.variable
                     # 4, x
-                    if nb.isdigit() and self.var == var:
+                    if Data.is_number(nb) and self.variable == var:
                         self.expression.extend((number(nb), "*"))
                     else:
                         raise TypeError

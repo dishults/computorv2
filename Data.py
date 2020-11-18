@@ -91,12 +91,13 @@ class Data:
     @staticmethod
     def is_number(var):
         try:
-            return var.isdigit()
+            assert var.isdigit()
         except:
             try:
-                return type(float(var)) == float
+                assert type(float(var)) == float
             except:
                 try:
-                    return type(int(var)) == int
+                    assert type(int(var)) == int
                 except:
                     return False
+        return True

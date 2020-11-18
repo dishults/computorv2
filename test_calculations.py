@@ -37,6 +37,8 @@ class Tests(unittest.TestCase):
             ["fa(2) + v + fb(4) + 2 = ?",     "16"],
             ["fa(2 * 3) = ?",                 "8"],
             ["fa(2 * 2) + fa(3 * 3) = ?",     "17"],
+            ["f(x) = 1.2x",                   "1.2 * x"],
+            ["f(1.2 * 4) = ?",                "5.76"],
         ])
 
     def test_image_computation(self):

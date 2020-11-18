@@ -1,5 +1,5 @@
 from Data import Data
-from Number import number
+from Number import number, Complex
 
 class Math(Data):
 
@@ -70,7 +70,11 @@ class Math(Data):
                 else:
                     expression.pop(i)
                     other = expression.pop(i)
-                    expression[i-1] = expression[i-1].math(sign, other)
+                    res = expression[i-1].math(sign, other)
+                    if isinstance(other, Complex):
+                        expression[i-1] = Complex(str(res))
+                    else:
+                        expression[i-1] = res
                     i = 0
             else:
                 i += 1

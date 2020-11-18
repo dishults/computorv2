@@ -1,4 +1,5 @@
 from Data import Data
+from Number import Complex
 from Simple import Simple
 from Polynomial import Polynomial
 
@@ -36,6 +37,11 @@ def calculate_function(expression, rest=None):
         expression = process_expressions_in_variables(expression)
     try:
         assert not rest
+        if "i" in expression:
+            expression = expression.replace("*i", "i")
+            if expression.count("i") == 1\
+                    and not any(char in "/%^*" for char in expression):
+                return Complex(expression)
         obj = Simple(0, expression)
         return obj.expression[0]
     except:

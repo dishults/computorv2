@@ -5,6 +5,9 @@ class Data:
     def __lt__(self, other):
         return self.this() < other
 
+    def __ne__(self, other):
+        return self.this() != other
+
     def __gt__(self, other):
         return self.this() > other
 

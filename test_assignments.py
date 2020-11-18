@@ -7,8 +7,11 @@ class Tests(unittest.TestCase):
 
     def do(self, tests):
         for test, correct in tests:
-            res = process_input(test)
-            self.assertEqual(str(res), correct)
+            try:
+                res = process_input(test)
+                self.assertEqual(str(res), correct)
+            except:
+                self.fail(test)
 
     def test_imaginary_numbers(self):
         self.do([

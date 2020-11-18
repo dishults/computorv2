@@ -17,6 +17,9 @@ def get_type(name, rest):
     elif "[" in rest:
         return Matrix.save_data(name, rest)
     elif "i" in rest:
+        rest = rest.replace("*i", "i")
+        if rest.count("i") > 1 or any(char in "/%^*" for char in rest):
+            return f.save_function(name, rest, simple=True)
         return save_number(name, rest)
     elif rest in Data.everything:
         return Data.reassign(name, rest)

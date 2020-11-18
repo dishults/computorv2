@@ -7,8 +7,11 @@ class Tests(unittest.TestCase):
 
     def do(self, tests):
         for test, correct in tests:
-            res = process_input(test)
-            self.assertEqual(str(res), correct)
+            try:
+                res = process_input(test)
+                self.assertEqual(str(res), correct)
+            except:
+                self.fail(test)
 
     def test_variable(self):
         self.do([
@@ -39,6 +42,13 @@ class Tests(unittest.TestCase):
             ["fa(2 * 2) + fa(3 * 3) = ?",     "17"],
             ["f(x) = 1.2x",                   "1.2 * x"],
             ["f(1.2 * 4) = ?",                "5.76"],
+        ])
+
+    def test_imaginary_numbers(self):
+        self.do([
+            ["2i + 3", "3 + 2i"],
+            ["2i+3 + 4i+4", "7 + 6i"],
+            ["c = 2i+3 + 4i+4", "7 + 6i"],
         ])
 
     def test_image_computation(self):

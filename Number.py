@@ -31,27 +31,31 @@ class Rational(Number):
 class Complex(Number):
 
     def __init__(self, rest):
-        sign, rational, imaginary, reverse = self.process_signs(rest)
-        super().__init__(rational)
-        self.sign = sign
+        self.reserved = False
+        try:
+            rational, imaginary = self.process_signs(rest)
+        except:
+            rational, imaginary = 0, self.strip_i(rest)
+        self.rational = Rational(rational)
         self.imaginary = self.convert_to_num(imaginary)
-        if sign == "-" and self.imaginary > 0:
-            self.sign = "+"
-        if sign in ("/", "*", "%"):
-            a, b = self.number, self.imaginary
-            if reverse:
-                a, b = b, a
-            if sign == "/":
-                self.imaginary = a / b
-            elif sign == "*":
-                self.imaginary = a * b
-            elif sign == "%":
-                self.imaginary = a % b
-            self.number = 0
+
+    def math(self, sign, other):
+        rational = self.rational.math(sign, other)
+        imaginary = self.operations[sign](self, other)
+        if imaginary >= 0:
+            return Complex(f"{rational}+{imaginary}")
+        return Complex(f"{rational}{imaginary}")
+    
+    def this(self):
+        return self.imaginary
 
     def __str__(self):
-        if self.number:
-            return f"{self.number} {self.sign} {abs(self.imaginary)}i"
+        if self.rational != 0:
+            if self.imaginary >= 0:
+                sign = "+"
+            else:
+                sign = "-"
+            return f"{self.rational} {sign} {abs(self.imaginary)}i"
         else:
             if self.imaginary == 1:
                 return "i"
@@ -61,36 +65,28 @@ class Complex(Number):
                 return f"{self.imaginary}i"
 
     def process_signs(self, rest):
-        for sign in ("+", "-", "/", "%", "*"):
-            if sign in rest:
-                reverse = False
-                # every sign except "*" and plus "*" with imaginary part without "*" like 4i)
-                try:
-                    if sign == "-":
-                        if rest[0] == "-":
-                            rest1 = rest[1:]
-                            if "-" not in rest1:
-                                continue
-                            rational, imaginary = rest1.split(sign)
-                            rational = "-" + rational
-                        else:
-                            rational, imaginary = rest.split(sign)
-                        imaginary = "-" + imaginary
-                    else:
-                        rational, imaginary = rest.split(sign)
-                    if "i" in rational:
-                        rational, imaginary = imaginary, rational
-                        reverse = True
-                    if "*" in imaginary:
-                        imaginary = imaginary.split("*")[0]
-                    else:
-                        imaginary = imaginary.split("i")[0]
-                # "*" sign and imaginary part with "*" like 4*i
-                except:
-                    rational, imaginary, i = rest.split(sign)
-                    if imaginary == "i":
-                        imaginary, rational = rational, i
-                return sign, rational, imaginary, reverse
+        if "-" in rest[1:]:
+            if rest[0] == "-":
+                rest1 = rest[1:]
+                rational, imaginary = rest1.split("-")
+                rational = "-" + rational
+            else:
+                rational, imaginary = rest.split("-")
+            imaginary = "-" + imaginary
+        else:
+            rational, imaginary = rest.split("+")
+        if "i" in rational:
+            rational, imaginary = imaginary, rational
+        imaginary = self.strip_i(imaginary)
+        return rational, imaginary
+    
+    @staticmethod
+    def strip_i(imaginary):
+        if "*" in imaginary:
+            imaginary = imaginary.split("*")[0]
+        else:
+            imaginary = imaginary.split("i")[0]
+        return imaginary
 
 def number(number):
     try:

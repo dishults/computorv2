@@ -5,7 +5,7 @@ from SMPL.Variable import Variable
 
 class Simple(Math, Variable):
 
-    def __init__(self, variable, expression, sub_expression=False):
+    def __init__(self, expression, variable=0, sub_expression=False):
         self.expression = []
         self.variable = variable
         self.sub_expression = sub_expression
@@ -53,7 +53,7 @@ class Simple(Math, Variable):
                 if func:
                     res = self.calculate_function_with_variable(func, var)
                 else:
-                    res = Simple(self.variable, var, sub_expression=True)
+                    res = Simple(var, self.variable, sub_expression=True)
                 self.expression.append(res)
                 i = 0
             else:

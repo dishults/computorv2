@@ -9,14 +9,11 @@ def function(func, var, expression):
     else:
         return Simple.save_data([func, var], expression)
 
-def save_function(func, rest, simple=False):
-    if simple:
-        return Simple.save_data([func, 0], rest)
-    else:
-        func, var = Simple.get_function_and_variable(func)[:2]
-        if var == "i":
-            raise SyntaxError
-        return function(func, var, rest)
+def save_function(func, rest):
+    func, var = Simple.get_function_and_variable(func)[:2]
+    if var == "i":
+        raise SyntaxError
+    return function(func, var, rest)
 
 def process_expressions_in_variables(expression):
     copy = expression[:]
@@ -37,12 +34,7 @@ def calculate_function(expression, rest=None):
         expression = process_expressions_in_variables(expression)
     try:
         assert not rest
-        if "i" in expression:
-            expression = expression.replace("*i", "i")
-            if expression.count("i") == 1\
-                    and not any(char in "/%^*" for char in expression):
-                return Complex(expression)
-        obj = Simple(0, expression)
+        obj = Simple(expression)
         return obj.expression[0]
     except:
         return Polynomial.calculate(expression, rest)
@@ -59,3 +51,9 @@ def check_if_variable_is_expression(var):
         else:
             return calculate_function(var)
     return var
+
+def process_function(name, rest, simple=False):
+    if name:
+        return Simple.process(name, rest)
+    else:
+        return calculate_function(rest)

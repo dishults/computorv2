@@ -8,7 +8,7 @@ from POLY.Term import Term
 
 class Polynomial(Data):
     
-    def __init__(self, variable, expression, inverse=False):
+    def __init__(self, expression, variable, inverse=False):
         self.all_terms = {}
         self.variable = variable
         expression = expression.replace("*", "")
@@ -134,13 +134,13 @@ class Polynomial(Data):
         if Data.is_number(var):
             num = var
             var = original.variable
-            copy = Simple(var, expression)
+            copy = Simple(expression, var)
             res = copy.calculate_with_variable(num, copy.expression)
             if not rest:
                 return res
             expression = str(res)
 
-        copy = Polynomial(var, expression)
-        rest = Polynomial(var, rest, inverse=True)
+        copy = Polynomial(expression, var)
+        rest = Polynomial(rest, var, inverse=True)
         copy -= rest
         return str(copy) + " = 0\n  " + copy.solve()

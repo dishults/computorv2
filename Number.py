@@ -79,7 +79,7 @@ class Complex(Number):
             rational, imaginary = imaginary, rational
         imaginary = self.strip_i(imaginary)
         return rational, imaginary
-    
+
     @staticmethod
     def strip_i(imaginary):
         if "*" in imaginary:

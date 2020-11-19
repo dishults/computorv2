@@ -76,7 +76,7 @@ class Data:
     @classmethod
     def save_data(cls, name, rest):
         if type(name) == list:
-            name, obj = name[0], cls(name[1], rest)
+            name, obj = name[0], cls(rest, name[1])
         else:
             obj = cls(rest)
         cls.everything[name] = obj
@@ -87,9 +87,17 @@ class Data:
         return cls.everything[name]
     
     @classmethod
-    def reassign(cls, where, what):
-        cls.everything[where] = cls.everything[what]
-        return cls.show(where)
+    def process_data(cls, name, rest):
+        if name:
+            cls.everything[name] = cls.everything[rest]
+        return Data.show(rest)
+
+    @classmethod
+    def process(cls, name, rest):
+        obj = cls(rest)
+        if name:
+            cls.everything[name] = obj
+        return obj
 
     @staticmethod
     def is_number(var):
@@ -104,3 +112,4 @@ class Data:
                 except:
                     return False
         return True
+    

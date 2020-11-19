@@ -4,30 +4,26 @@ import sys
 
 import function as f
 
-from Number import save_number
+from Number import Rational, Complex, save_number
 
 from Data import Data
 from Simple import Simple
 from Matrix import Matrix
 
-def get_type(name, rest):
-    check_name(name)
-    if "(" in name:
-        return f.save_function(name, rest)
+def process_type(name, rest):
+    if Data.is_number(rest):
+        return Rational.process(name, rest)
     elif "[" in rest:
-        return Matrix.save_data(name, rest)
+        return Matrix.process(name, rest)
     elif "i" in rest:
         rest = rest.replace("*i", "i")
         if rest.count("i") > 1 or any(char in "/%^*" for char in rest):
-            return f.save_function(name, rest, simple=True)
-        return save_number(name, rest)
+            return f.process_function(name, rest, simple=True)
+        else:
+            return Complex.process(name, rest)
     elif rest in Data.everything:
-        return Data.reassign(name, rest)
-    else:
-        try:
-            return save_number(name, rest)
-        except:
-            return f.save_function(name, rest, simple=True)
+        return Data.process_data(name, rest)
+    return f.process_function(name, rest, simple=True)
 
 def check_name(name):
     for char in ".,*/%+-^()[;]=?0123456789":
@@ -50,12 +46,12 @@ def process_input(user_input):
     if "=" in user_input and not user_input.endswith("?"):
         name, rest = user_input.split("=")
         check_input(name, "")
-        return get_type(name, rest)
+        check_name(name)
+        if "(" in name:
+            return f.save_function(name, rest)
+        return process_type(name, rest)
     elif "(" not in user_input:
-        try:
-            return Data.show(user_input)
-        except:
-            pass
+        return process_type(0, user_input)
     return f.calculate_function(user_input)
 
 def main():

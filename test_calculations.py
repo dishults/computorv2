@@ -63,11 +63,24 @@ class Tests(unittest.TestCase):
 
     def test_polynomials(self):
         self.do([
-            ["f(x) = x^2 + 2x + 1","x^2 + 2x + 1"],
+            ["f(x) = x^2 + 2x + 1", "x^2 + 2x + 1"],
             ["f(x) = 2 ?",
                 "x^2 + 2x - 1 = 0\n  The two R solutions are:\n  -2.414214\n  0.414214"],
             ["f(x) = 3x + 2 ?",
                 "x^2 - x - 1 = 0\n  The two R solutions are:\n  -0.618034\n  1.618034"],
+
+            ["b(x) = 3x + 2", "3 * x + 2"],
+            ["f(x) = b ?",
+                "x^2 - x - 1 = 0\n  The two R solutions are:\n  -0.618034\n  1.618034"],            
+            ["f(x) = b(2) ?",
+                "x^2 + 2x - 7 = 0\n  The two R solutions are:\n  -3.828427\n  1.828427"],
+            ["f(x) = b(2) + 4x?",
+                "x^2 - 2x - 7 = 0\n  The two R solutions are:\n  -1.828427\n  3.828427"],
+            ["f(x) = b(2) + 4*x^2 + f(3)?",
+                "-3 * x^2 + 2x - 23 = 0\n  The two C solutions are:\n  0.333333 - -2.748737i\n  0.333333 + -2.748737i"],
+            ["f(x) = b(2) + 4*x^2 - f(3) + 2x - 2?",
+                "-3 * x^2 + 11 = 0\n  The two R solutions are:\n  1.914854\n  -1.914854"],
+
             ["f(x) = 2x + 2 ?",
                 "x^2 - 1 = 0\n  The two R solutions are:\n  -1.0\n  1.0"],
             ["f(x) = x^2 + 1 ?",   "2x = 0\n  The R solution is:\n  0"],
@@ -78,6 +91,8 @@ class Tests(unittest.TestCase):
                 "5 * x^2 - x - 1 = 0\n  The two R solutions are:\n  -0.358258\n  0.558258"],
             ["f(x) = x^2 + 2x + 1 ?",
                 "0 = 0\n  Every real number is a solution"],
+            ["a + 2 = 2 ?",
+                "2 = 0\n  The eqution has no solution"],
         ])
 
     def test_polynomials_computorv1_subject_examples(self):

@@ -8,24 +8,20 @@ from POLY.Term import Term
 
 class Polynomial(Data):
     
-    def __init__(self, expression, variable, inverse=False):
+    def __init__(self, expression, variable, rest=None, inverse=False):
         self.all_terms = {}
         self.variable = variable
-        expression = expression.replace("*", "")
-        expression = expression.replace("^", "")
-        previous = "+"
-        if expression[0] == "-":
-            previous = "-"
-            expression = expression[1:]
-        for sign in expression:
-            if sign in ("+", "-"):
-                term, expression = expression.split(sign, 1)
-                self.proceed(term, previous, variable, inverse)
-                previous = sign
-        self.proceed(expression, previous, variable, inverse)
+        expression = expression.replace("*", "").replace("^", "")
+        self.get_terms(expression, variable, inverse)
+        if rest:
+            rest = rest.replace("*", "").replace("^", "")
+            self.get_terms(rest, variable, inverse=True)
         self.get_degree()
+        self.expression = str(self)
 
     def __str__(self):
+        if hasattr(self, 'expression'):
+            return self.expression
         p = ""
         terms_in_reverse__order = sorted(self.all_terms, reverse=True)
         term = self.all_terms[terms_in_reverse__order[0]]
@@ -58,7 +54,19 @@ class Polynomial(Data):
         self.get_degree()
         return self
 
-    def proceed(self, term, sign, variable, inverse=False):
+    def get_terms(self, expression, variable, inverse=False):
+        previous = "+"
+        if expression[0] == "-":
+            previous = "-"
+            expression = expression[1:]
+        for sign in expression:
+            if sign in ("+", "-"):
+                term, expression = expression.split(sign, 1)
+                self.proceed(term, previous, variable, inverse)
+                previous = sign
+        self.proceed(expression, previous, variable, inverse)
+
+    def proceed(self, term, sign, variable, inverse):
         try: # 5x^2
             coefficient, exponent = term.split(variable) 
             assert exponent
@@ -71,7 +79,7 @@ class Polynomial(Data):
         term = Term(sign, coefficient, variable, exponent, inverse)
         if term.exponent in self.all_terms:
             self.all_terms[term.exponent].coefficient += term.coefficient
-            if term.exponent > 0 and self.all_terms[term.exponent].coefficient == 0:
+            if term.exponent > 2 and self.all_terms[term.exponent].coefficient == 0:
                 del self.all_terms[term.exponent]
         else:
             self.all_terms[term.exponent] = term
@@ -87,21 +95,25 @@ class Polynomial(Data):
     def solve(self):
         """Solve Linear and Quadratic expressions."""
 
+        if hasattr(self, 'solution'):
+            return self.solution
+
         if self.degree > 2:
-            return"The polynomial degree is strictly greater than 2, I can't solve."
+            res = "The polynomial degree is strictly greater than 2, I can't solve."
         
         elif self.degree == 0:
             """a * X^0 = 0""" 
             a = self.all_terms[0].coefficient
             if a != 0:
-                return"The eqution has no solution"
-            return"Every real number is a solution"
+                res = "The eqution has no solution"
+            else:
+                res = "Every real number is a solution"
 
         elif self.degree == 1:
             """a * X^1 + b * X^0 = 0"""
             a = self.all_terms[1].coefficient
             b = self.all_terms[0].coefficient
-            return formula.linear(a, b)
+            res = formula.linear(a, b)
 
         elif self.degree == 2:
             """a * X^2 + b * X^1 + c * X^0 = 0"""
@@ -111,36 +123,29 @@ class Polynomial(Data):
             discriminant = (b ** 2) - (4 * a * c)
             two_a = 2 * a
             if discriminant == 0:
-                return formula.linear(two_a, b)
+                res = formula.linear(two_a, b)
             else:
                 if discriminant > 0:
-                    return formula.quadratic(two_a, b, discriminant)
+                    res = formula.quadratic(two_a, b, discriminant)
                 else:
-                    return formula.quadratic(two_a, b, discriminant, simple=False)
+                    res = formula.quadratic(two_a, b, discriminant, simple=False)
+        self.solution = str(self) + " = 0\n  " + res
+        return self.solution
+
+    def calculate_with_variable(self, variable, expression):
+        copy = Simple(expression, self.variable)
+        return copy.calculate_with_variable(variable, copy.expression)
 
     @staticmethod
     def calculate(expression, rest):
-        i = expression.index("(")
-        braket = Simple.what_braket(expression, -1)
-        func = expression[:i]
-        var = expression[i+1:braket]
-        original = Data.everything[func]
-        expression = str(original)
+        try:
+            name, var = Simple.get_function_and_variable(expression)[:2]
+        except:
+            return Polynomial(expression, "x", rest).solve()
 
+        original = Data.everything[name]
         if var == original.variable and rest == "0":
-            return expression + " = 0\n  " + original.solve()
+            return original.solve()
 
-        expression = expression.replace(" ", "")
-        if Data.is_number(var):
-            num = var
-            var = original.variable
-            copy = Simple(expression, var)
-            res = copy.calculate_with_variable(num, copy.expression)
-            if not rest:
-                return res
-            expression = str(res)
-
-        copy = Polynomial(expression, var)
-        rest = Polynomial(rest, var, inverse=True)
-        copy -= rest
-        return str(copy) + " = 0\n  " + copy.solve()
+        expression = str(original).replace(" ", "")
+        return Polynomial(expression, var, rest).solve()

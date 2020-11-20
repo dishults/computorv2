@@ -101,6 +101,11 @@ class Simple(Math, Variable):
         if i:
             braket = Simple.what_braket(expression, -1)
             func = expression[:i]
+            while not func.isalpha():
+                for c in func:
+                    if not c.isalpha():
+                        func = func.split(c)[-1]
+                        break
         else:
             braket = Simple.what_braket(expression[1:]) + 1
         var = expression[i+1:braket]

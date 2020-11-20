@@ -74,15 +74,6 @@ class Data:
         pass
 
     @classmethod
-    def save_data(cls, name, rest):
-        if type(name) == list:
-            name, obj = name[0], cls(rest, name[1])
-        else:
-            obj = cls(rest)
-        cls.everything[name] = obj
-        return cls.show(name)
-    
-    @classmethod
     def show(cls, name):
         return cls.everything[name]
     
@@ -93,8 +84,8 @@ class Data:
         return Data.show(rest)
 
     @classmethod
-    def process(cls, name, rest):
-        obj = cls(rest)
+    def process(cls, name, *args):
+        obj = cls(*args)
         if name:
             cls.everything[name] = obj
         return obj

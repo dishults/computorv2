@@ -18,20 +18,25 @@ def process_type(name, rest):
     elif "i" in rest:
         rest = rest.replace("*i", "i")
         if rest.count("i") > 1 or any(char in "/%^*" for char in rest):
-            return f.process_function(name, rest, simple=True)
+            return f.process_function(name, rest)
         else:
             return Complex.process(name, rest)
     elif rest in Data.everything:
         return Data.process_data(name, rest)
-    return f.process_function(name, rest, simple=True)
+    return f.process_function(name, rest)
 
 def check_name(name):
-    for char in ".,*/%+-^()[;]=?0123456789":
+    if "(" in name:
+        func, var, expression = Simple.get_function_and_variable(name)
+        if func == "i" or var == "i" or expression:
+            raise SyntaxError
+        name = func + var
+    for char in ".,*/%+-^[;]=0123456789":
         name = name.replace(char, "")
     if not name or name == "i":
         raise SyntaxError
 
-def check_input(user_input, allowed_chars):
+def check_input(user_input, allowed_chars=".,*/%+-^()[;]=?0123456789"):
     for char in user_input:
         if not char.isalpha() and not char in allowed_chars:
             if "(" in user_input:
@@ -40,19 +45,15 @@ def check_input(user_input, allowed_chars):
             raise SyntaxError
 
 def process_input(user_input):
-    user_input = user_input.lower()
-    user_input = user_input.replace(" ", "")
-    check_input(user_input, (".,*/%+-^()[;]=?0123456789"))
+    user_input = user_input.lower().replace(" ", "")
+    check_input(user_input)
     if "=" in user_input and not user_input.endswith("?"):
         name, rest = user_input.split("=")
         check_input(name, "")
         check_name(name)
-        if "(" in name:
-            return f.save_function(name, rest)
         return process_type(name, rest)
-    elif "(" not in user_input:
-        return process_type(0, user_input)
-    return f.calculate_function(user_input)
+    user_input = user_input.strip("?")
+    return process_type(0, user_input)
 
 def main():
     while True:

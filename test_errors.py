@@ -7,8 +7,11 @@ class Tests(unittest.TestCase):
 
     def do(self, tests):
         for test in tests:
-            with self.assertRaises(Exception):
-                process_input(test)
+            try:
+                with self.assertRaises(Exception):
+                    process_input(test)
+            except:
+                self.fail(test)
 
     def test_variable_name(self):
         self.do([
@@ -20,10 +23,11 @@ class Tests(unittest.TestCase):
 
     def test_computation(self):
         process_input("a = 2")
+        process_input("f(x) = 2 + 4x")
         self.do([
-            "a + 2 = 2 ?",
             "a + 2 &",
             "a + 2 !",
+            "f(z) = ?",
         ])
 
 if __name__ == "__main__":

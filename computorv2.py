@@ -4,7 +4,7 @@ import sys
 
 import function as f
 
-from Number import Rational, Complex, save_number
+from Number import Rational, Complex
 
 from Data import Data
 from Simple import Simple
@@ -17,7 +17,7 @@ def process_type(name, rest):
         return Matrix.process(name, rest)
     elif "i" in rest:
         rest = rest.replace("*i", "i")
-        if rest.count("i") > 1 or any(char in "/%^*" for char in rest):
+        if rest.count("i") > 1 or any(char in "/%^*(" for char in rest):
             return f.process_function(name, rest)
         else:
             return Complex.process(name, rest)
@@ -70,6 +70,7 @@ def try_run():
     except: pass
 
 def test_main():
+    process_input("f(x) = 3^2 - 2")
     print(" ", process_input(sys.argv[1]))
     #try_run()
 

@@ -20,8 +20,6 @@ class Variable:
                     # 4, x
                     if Data.is_number(nb) and self.variable == var:
                         self.expression.extend((number(nb), "*"))
-                    else:
-                        raise TypeError
                 # x in ()
                 if self.sub_expression:
                     self.reserved = True
@@ -49,7 +47,6 @@ class Variable:
                     return i
             i += 1
         return -1
-
 
     def get_first(self, i, j=0):
         self.expression.pop(i)

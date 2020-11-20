@@ -20,6 +20,7 @@ class Tests(unittest.TestCase):
             ["a = 4 / 2",                "2"],
             ["a = 5 % 2",                "1"],
             ["a = 4 * 2",                "8"],
+            ["a = 3^2-2",                "7"],
             ["a = 3 / 2 + 3",            "4.5"],
             ["a = 2 * (4 + 5)",          "18"],
             ["a = 2 * (4 + 5) / 9",      "2"],
@@ -93,6 +94,11 @@ class Tests(unittest.TestCase):
                 "0 = 0\n  Every real number is a solution"],
             ["a + 2 = 2 ?",
                 "2 = 0\n  The eqution has no solution"],
+            
+            ["f(x) = 3^2 - 2",   "7"],
+            ["f(x) = ?",         "7 = 0\n  The eqution has no solution"],
+            ["f(x) = 0 ?",       "7 = 0\n  The eqution has no solution"],
+            ["f(x) = 7 ?",       "0 = 0\n  Every real number is a solution"],
         ])
 
     def test_polynomials_computorv1_subject_examples(self):

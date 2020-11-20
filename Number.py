@@ -94,10 +94,3 @@ def number(number):
         return Complex(number)
     except:
         return Rational(number)
-
-def save_number(name, number):
-    try:
-        assert "i" in number
-        return Complex.save_data(name, number)
-    except:
-        return Rational.save_data(name, number)

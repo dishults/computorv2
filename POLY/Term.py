@@ -1,4 +1,5 @@
 from Data import Data
+from Number import Number
 
 class Term:
 
@@ -7,8 +8,8 @@ class Term:
         if not coefficient:
             coefficient = "1"
         try:
-            self.coefficient = float(coefficient)
-            if sign == "-" and self.coefficient > 0: # just sign == "-"?
+            self.coefficient = Number.convert_to_num(coefficient)
+            if sign == "-" and self.coefficient > 0:
                 self.coefficient *= -1
             if inverse:
                 self.coefficient *= -1
@@ -19,17 +20,15 @@ class Term:
     
     def __str__(self):
         num = abs(self.coefficient)
-        if num % 1 == 0:
-            num = int(num)
-        if self.exponent > 1:
-            if num == 1:
-                return f"{self.variable}^{self.exponent}"
-            else:
-                return f"{num} * {self.variable}^{self.exponent}"
+        if self.exponent == 0:
+            return f"{num}"
         elif self.exponent == 1:
             if num == 1:
                 return f"{self.variable}"
             else:
                 return f"{num}{self.variable}"
-        elif self.exponent == 0:
-            return f"{num}"
+        elif self.exponent > 1:
+            if num == 1:
+                return f"{self.variable}^{self.exponent}"
+            else:
+                return f"{num} * {self.variable}^{self.exponent}"

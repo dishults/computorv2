@@ -17,8 +17,10 @@ class Tests(unittest.TestCase):
         self.do([
             "v8 = 2",
             "f(x) = 2 * &",
+            "f(x) = 2 * z + x - z",
             "i = 3",
             "f(i) = 4 * i",
+            "f(x) = 3*x^-1",
         ])
 
     def test_computation(self):

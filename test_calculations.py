@@ -50,6 +50,7 @@ class Tests(unittest.TestCase):
             ["2i + 3", "3 + 2i"],
             ["2i+3 + 4i+4", "7 + 6i"],
             ["c = 2i+3 + 4i+4", "7 + 6i"],
+            ["2 + 4i * 2", "2 + 8i"],
         ])
 
     def test_image_computation(self):

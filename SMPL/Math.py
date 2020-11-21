@@ -1,5 +1,5 @@
 from Data import Data
-from Number import number, Complex
+from Number import number, Rational, Complex
 
 class Math(Data):
 
@@ -49,6 +49,26 @@ class Math(Data):
         return expression
 
     @staticmethod
+    def merge_rational_and_complex(expression, one, two, i):
+        if isinstance(expression[one], Complex) \
+            and isinstance(expression[two], Rational):
+            expression.pop(i)
+            other = expression.pop(i if one < two else i-1)
+            expression[i-1].rational = other
+            return True
+        return False
+
+
+    @staticmethod
+    def fix_complex_numbers(expression, i=0):
+        while i < len(expression):
+            if expression[i] in ("+", "-"):
+                if Math.merge_rational_and_complex(expression, i-1, i+1, i) or\
+                    Math.merge_rational_and_complex(expression, i+1, i-1, i):
+                    continue
+            i += 1
+
+    @staticmethod
     def calculate(expression, i=0):
         while i < len(expression):
             sign = expression[i]
@@ -58,10 +78,11 @@ class Math(Data):
                     expression[i-1] = Math.do_math(expression, i, sign)
                     i = 0 ; continue
             i += 1
-        res = Math.calculate_plus_minus(expression)
-        if len(res) == 1:
-            res = res[0]
-        return res
+        Math.fix_complex_numbers(expression)
+        Math.calculate_plus_minus(expression)
+        if len(expression) == 1:
+            return expression[0]
+        return expression
 
     @staticmethod
     def do_math(expression, i, sign):

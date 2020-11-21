@@ -21,7 +21,6 @@ class Simple(Math, Variable):
                 self.expression[0] = -self.expression[0]
             else:
                 self.expression[0] = "-" + self.expression[0]
-        self.fix_complex_numbers()
         self.calculate(self.expression)
         if len(self.expression) > 1:
             self.calculate_all_unreserved_vars()
@@ -60,24 +59,6 @@ class Simple(Math, Variable):
                 i += 1
         if expression and expression != ")":
             self.process_variable(expression)
-    
-    def fix_complex_numbers(self):
-        i = 0
-        while i < len(self.expression):
-            if self.expression[i] in ("+", "-"):
-                if isinstance(self.expression[i-1], Complex) \
-                   and isinstance(self.expression[i+1], Rational):
-                    self.expression.pop(i)
-                    other = self.expression.pop(i)
-                    self.expression[i-1].rational = other
-                    continue
-                elif isinstance(self.expression[i+1], Complex) \
-                   and isinstance(self.expression[i-1], Rational):
-                    self.expression.pop(i)
-                    other = self.expression.pop(i-1)
-                    self.expression[i-1].rational = other
-                    continue
-            i += 1
 
     @staticmethod
     def what_braket(expression, braket=0):

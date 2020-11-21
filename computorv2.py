@@ -70,7 +70,7 @@ def try_run():
     except: pass
 
 def test_main():
-    process_input("f(x) = 3^2 - 2")
+    process_input("f(x) = 4x")
     print(" ", process_input(sys.argv[1]))
     #try_run()
 

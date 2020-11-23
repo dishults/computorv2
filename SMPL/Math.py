@@ -37,18 +37,6 @@ class Math(Data):
         return obj.calculate_with_variable(obj.expression[:], var)
 
     @staticmethod
-    def calculate_plus_minus(expression, i=1):
-        while i < len(expression):
-            sign = expression[i]
-            if sign in ("+", "-"):
-                if not type(expression[i-1]) == str and not type(expression[i+1]) == str\
-                        and not expression[i+1].reserved and not expression[i-1].reserved:
-                    expression[i-1] = Math.do_math(expression, i, sign)
-                    continue
-            i += 2
-        return expression
-
-    @staticmethod
     def merge_rational_and_complex(expression, one, two, i):
         if isinstance(expression[one], Complex) \
                 and isinstance(expression[two], Rational) \
@@ -70,15 +58,32 @@ class Math(Data):
             i += 2
 
     @staticmethod
-    def calculate(expression, i=1):
+    def calculate_plus_minus(expression, i=1):
         while i < len(expression):
             sign = expression[i]
-            if sign in ("/", "%", "*", "^"):
-                if not Math.set_reserved(expression, i-1, i+1)\
-                        and not Math.set_reserved(expression, i+1, i-1):
+            if sign in ("+", "-"):
+                if not type(expression[i-1]) == str and not type(expression[i+1]) == str\
+                        and not expression[i+1].reserved and not expression[i-1].reserved:
                     expression[i-1] = Math.do_math(expression, i, sign)
                     continue
             i += 2
+        return expression
+
+    @staticmethod
+    def calculate_high_precedence(expression, operators, i=1):
+        while i < len(expression):
+            operator = expression[i]
+            if operator in operators:
+                if not Math.set_reserved(expression, i-1, i+1)\
+                        and not Math.set_reserved(expression, i+1, i-1):
+                    expression[i-1] = Math.do_math(expression, i, operator)
+                    continue
+            i += 2
+
+    @staticmethod
+    def calculate(expression, i=1):
+        Math.calculate_high_precedence(expression, ("^",))
+        Math.calculate_high_precedence(expression, ("/", "%", "*"))
         Math.fix_complex_numbers(expression)
         Math.calculate_plus_minus(expression)
         if len(expression) == 1:

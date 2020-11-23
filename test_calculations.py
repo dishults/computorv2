@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import unittest
-from computorv2 import process_input
+from computorv2 import process_input, Data
 
 class Tests(unittest.TestCase):
 
@@ -16,11 +16,23 @@ class Tests(unittest.TestCase):
     def test_variable(self):
         self.do([
             ["a = 1 + 2",                "3"],
-            ["a = 5 - 2",                "3"],
+            ["1 + 2 = ?",                "3"],
+            ["1 + 2",                    "3"],
+            ["a = 7 - 2",                "5"],
+            ["7 - 2 = ?",                "5"],
+            ["7 - 2",                    "5"],
             ["a = 4 / 2",                "2"],
+            ["4 / 2 = ?",                "2"],
+            ["4 / 2",                    "2"],
             ["a = 5 % 2",                "1"],
+            ["5 % 2 = ?",                "1"],
+            ["5 % 2",                    "1"],
             ["a = 4 * 2",                "8"],
+            ["4 * 2 = ?",                "8"],
+            ["4 * 2",                    "8"],
             ["a = 3^2-2",                "7"],
+            ["3^2-2 = ?",                "7"],
+            ["3^2-2",                    "7"],
             ["a = 3 / 2 + 3",            "4.5"],
             ["a = 2 * (4 + 5)",          "18"],
             ["a = 2 * (4 + 5) / 9",      "2"],
@@ -34,7 +46,10 @@ class Tests(unittest.TestCase):
     def test_computation(self):
         self.do([
             ["a = 2",                         "2"],
+            ["a + 2 = ?",                     "4"],
             ["a + 2 ?",                       "4"],
+            ["a + 2",                         "4"],
+            ["a * 0",                         "0"],
             ["fa(x) = 2 + x",                 "2 + x"],
             ["fb(x) = 3 + x",                 "3 + x"],
             ["v = 3",                         "3"],
@@ -43,6 +58,18 @@ class Tests(unittest.TestCase):
             ["fa(2 * 2) + fa(3 * 3) = ?",     "17"],
             ["f(x) = 1.2x",                   "1.2 * x"],
             ["f(1.2 * 4) = ?",                "5.76"],
+            ["x = 4",                         "4"],
+            ["f(x) = ?",                      "4.8"],
+            ["f(x)",                          "4.8"],
+        ])
+        del Data.everything["x"]
+
+    def test_calculation_priority(self):
+        self.do([
+            ["3 * 5 ^ 2",                       "75"],
+            ["2 - 3 * 5 ^ 2",                   "-73"],
+            ["2 + 3 * 5 ^ 2 + 4 * 2 ^ 3 - 1",   "108"],
+            #["2 - (3 * 5) ^ 2",                 "-223"],
         ])
 
     def test_imaginary_numbers(self):
@@ -74,6 +101,7 @@ class Tests(unittest.TestCase):
     def test_polynomials(self):
         self.do([
             ["f(x) = x^2 + 2x + 1", "x^2 + 2x + 1"],
+            ["f(x) = ?",            "x^2 + 2x + 1"],
             ["f(x) = 2 ?",
                 "x^2 + 2x - 1 = 0\n  The two R solutions are:\n  -2.414214\n  0.414214"],
             ["f(x) = 3x + 2 ?",
@@ -105,7 +133,6 @@ class Tests(unittest.TestCase):
                 "2 = 0\n  The eqution has no solution"],
             
             ["f(x) = 3^2 - 2",   "7"],
-            ["f(x) = ?",         "7 = 0\n  The eqution has no solution"],
             ["f(x) = 0 ?",       "7 = 0\n  The eqution has no solution"],
             ["f(x) = 7 ?",       "0 = 0\n  Every real number is a solution"],
         ])

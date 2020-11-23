@@ -130,9 +130,11 @@ class Polynomial(Data):
             return Polynomial(expression, "x", rest).solution
 
         original = Data.everything[name]
-        if var == original.variable and rest == "0" \
-                and isinstance(original, Polynomial):
-            return original.solution
+        if var == original.variable:
+            if rest == "0" and isinstance(original, Polynomial):
+                return original.solution
+            elif not rest:
+                return str(original)
 
         expression = str(original).replace(" ", "")
         return Polynomial(expression, var, rest).solution

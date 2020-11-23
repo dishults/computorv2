@@ -7,7 +7,6 @@ class Variable:
     def abstract(self):
         self.expression = []
         self.variable = 0
-        self.sub_expression = None
 
     def process_variable(self, var):
         try:
@@ -21,18 +20,22 @@ class Variable:
                     if Data.is_number(nb) and self.variable == var:
                         self.expression.extend((number(nb), "*"))
                 # x in ()
-                if self.sub_expression:
+                else:
                     self.reserved = True
             elif var in Data.everything:
                 var = Data.everything[var]
             else:
                 raise TypeError
+        var = self.check_if_var_should_be_negative(var)
+        self.expression.append(var)
+
+    def check_if_var_should_be_negative(self, var):
         try:
             if self.expression[-1] == "-":
-                var = -var
+                return -var
         except:
             pass
-        self.expression.append(var)
+        return var
 
     def at_least_one_processed_var(self):
         for e in self.expression:

@@ -5,10 +5,9 @@ from SMPL.Variable import Variable
 
 class Simple(Math, Variable):
 
-    def __init__(self, expression, variable=0, sub_expression=False):
+    def __init__(self, expression, variable=0):
         self.expression = []
         self.variable = variable
-        self.sub_expression = sub_expression
         self.reserved = False
         self.negative = False
         starts_with_minus = False
@@ -28,11 +27,18 @@ class Simple(Math, Variable):
             raise SyntaxError
 
     def __str__(self):
-        f = f"{self.expression[0]}"
+
+        def brakets_or_not(e):
+            if isinstance(e, Complex) or isinstance(e, Simple):
+                return f"({e})"
+            return f"{e}"
+
+        if len(self.expression) == 1:
+            f = f"{self.expression[0]}"
+        else:
+            f = brakets_or_not(self.expression[0])
         for e in self.expression[1:]:
-            f += f" {e}"
-        if self.sub_expression:
-            f = "(" + f + ")"
+            f = f"{f} {brakets_or_not(e)}"
         f = f.replace("+ -", "- ")
         f = f.replace("- -", "- ")
         return f
@@ -52,7 +58,9 @@ class Simple(Math, Variable):
                 if func:
                     res = self.calculate_function_with_variable(func, var)
                 else:
-                    res = Simple(var, self.variable, sub_expression=True)
+                    res = Simple(var, self.variable)
+                    if len(res.expression) == 1:
+                        res = self.check_if_var_should_be_negative(res.expression[0])
                 self.expression.append(res)
                 i = 0
             else:
@@ -82,7 +90,7 @@ class Simple(Math, Variable):
         if i:
             braket = Simple.what_braket(expression, -1)
             func = expression[:i]
-            while not func.isalpha():
+            while func and not func.isalpha():
                 for c in func:
                     if not c.isalpha():
                         func = func.split(c)[-1]

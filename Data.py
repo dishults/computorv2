@@ -14,8 +14,11 @@ class Data:
 
     def __truediv__(self, other):
         number = self.this() / other
-        if number * 10 % 10 == 0:
-            number = int(number)
+        try:
+            if number * 10 % 10 == 0:
+                number = int(number)
+        except:
+            pass
         return number
 
     def __mod__(self, other):
@@ -68,7 +71,7 @@ class Data:
     }
 
     def math(self, sign, other):
-        pass
+        return self.operations[sign](self, other)
 
     def this(self):
         pass

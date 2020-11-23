@@ -22,7 +22,7 @@ class Rational(Number):
         return f"{self.number}"
 
     def math(self, sign, other):
-        return Rational(self.operations[sign](self, other))
+        return number(super().math(sign, other))
     
     def this(self):
         return self.number
@@ -39,15 +39,72 @@ class Complex(Number):
         self.rational = Rational(rational)
         self.imaginary = self.convert_to_num(imaginary)
 
-    def math(self, sign, other):
-        rational = self.rational.math(sign, other)
-        imaginary = self.operations[sign](self, other)
-        if imaginary >= 0:
-            return Complex(f"{rational}+{imaginary}")
-        return Complex(f"{rational}{imaginary}")
-    
+    def __truediv__(self, other):
+        return self.do_math(other, lambda a, b: a / b)
+
+    def __mod__(self, other):
+        raise ArithmeticError
+
+    def __mul__(self, other):
+        return self.do_math(other, lambda a, b: a * b)
+
+    def __add__(self, other):
+        if isinstance(other, Complex):
+            rational = self.rational + other.rational
+            imaginary = self.imaginary + other.imaginary
+            return self.return_c_number(rational, imaginary)            
+        return self.return_c_number(self.rational + other, self.imaginary)
+
+    def __pow__(self, other):
+        return self.do_math(other, lambda a, b: a ** b)
+
+    def __rtruediv__(self, other):
+        return self.do_r_math(other, lambda a, b: a / b)
+
+    def __rmod__(self, other):
+        raise ArithmeticError
+
+    def __rmul__(self, other):
+        return self.do_r_math(other, lambda a, b: a * b)
+
+    def __rpow__(self, other):
+        return self.do_r_math(other, lambda a, b: a ** b)
+
+    def __radd__(self, other):
+        if isinstance(other, Complex):
+            return Complex.__add__(other, self)
+        return self.return_c_number(other + self.rational, self.imaginary)
+
+    def __rsub__(self, other):
+        return self.__radd__(other)
+
+    operations = {
+        "/" : __truediv__,
+        "%" : __mod__,
+        "*" : __mul__,
+        "^" : __pow__,
+        "+" : __add__,
+        "-" : Data.operations["-"],
+    }
+
+    def do_math(self, other, f):
+        try:
+            rational = f(self.rational, other)
+        except:
+            rational = self.rational
+        imaginary = f(self.imaginary, other)
+        return self.return_c_number(rational, imaginary)
+
+    def do_r_math(self, other, f):
+        try:
+            rational = f(other, self.rational)
+        except:
+            rational = self.rational
+        imaginary = f(other, self.imaginary)
+        return self.return_c_number(rational, imaginary)
+
     def this(self):
-        return self.imaginary
+        return self.rational
 
     def __str__(self):
         if self.rational != 0:
@@ -88,8 +145,28 @@ class Complex(Number):
             imaginary = imaginary.split("i")[0]
         return imaginary
 
+    @staticmethod
+    def is_expression(expression):
+        if expression.count("i") > 1 or any(char in "/%^*(" for char in expression):
+            return True
+        plus = expression.count("+")
+        minus = expression.lstrip("-").count("-")
+        if plus == 1 and plus == minus:
+            return True
+        elif plus > 1 or minus > 1:
+            return True
+        return False
+
+    @staticmethod
+    def return_c_number(rational, imaginary):
+        if imaginary >= 0:
+            return Complex(f"{rational}+{imaginary}")
+        return Complex(f"{rational}{imaginary}")
+
 def number(number):
     try:
+        if isinstance(number, Complex):
+            return number
         assert "i" in number
         return Complex(number)
     except:

@@ -46,11 +46,19 @@ class Tests(unittest.TestCase):
         ])
 
     def test_imaginary_numbers(self):
+        process_input("f(x) = 4x")
+        process_input("c = 3 + 4i")
         self.do([
+            ["2 - c", "-1 - 4i"],
+            ["f(2 + 4i) = ?", "8 + 16i"],
             ["2i + 3", "3 + 2i"],
             ["2i+3 + 4i+4", "7 + 6i"],
             ["c = 2i+3 + 4i+4", "7 + 6i"],
             ["2 + 4i * 2", "2 + 8i"],
+            ["4i - 4i + 2", "2 + 0i"],
+            ["2 - (3 + 4i)", "-1 - 4i"],
+            ["f(x) = x * (2 + 4i)", "x * (2 + 4i)"],
+            ["f(2) = ?", "4 + 8i"],
         ])
 
     def test_image_computation(self):

@@ -17,7 +17,7 @@ def process_type(name, rest):
         return Matrix.process(name, rest)
     elif "i" in rest:
         rest = rest.replace("*i", "i")
-        if rest.count("i") > 1 or any(char in "/%^*(" for char in rest):
+        if Complex.is_expression(rest):
             return f.process_function(name, rest)
         else:
             return Complex.process(name, rest)
@@ -70,7 +70,6 @@ def try_run():
     except: pass
 
 def test_main():
-    process_input("f(x) = 4x")
     print(" ", process_input(sys.argv[1]))
     #try_run()
 

@@ -18,7 +18,7 @@ def process_expressions_in_variables(expression):
         except:
             break
         new_var = check_if_variable_is_expression(var)
-        if isinstance(new_var, Number) or Data.is_number(new_var):
+        if func and (isinstance(new_var, Number) or Data.is_number(new_var)):
             res = Simple.calculate_function_with_variable(func, new_var)
             res = str(res).replace(" ", "")
             expression = expression.replace(f"{func}({var})", res)
@@ -30,7 +30,7 @@ def calculate_function(expression, rest=None):
     try:
         assert not rest
         return Simple.process(0, expression)
-    except:
+    except (AssertionError, ValueError):
         if rest and "(" in rest:
             rest = process_expressions_in_variables(rest)
         return Polynomial.calculate(expression, rest)

@@ -10,7 +10,7 @@ class Math(Data):
         self.negative = None
 
     def math(self, sign, other):
-        return number(self.operations[sign](self, other))
+        return number(super().math(sign, other))
 
     def this(self):
         return self.expression[0]
@@ -23,7 +23,7 @@ class Math(Data):
         else:
             new_var = number(var)
         for i, v in enumerate(expression):
-            if v == self.variable:
+            if type(v) == type(self.variable) and v == self.variable:
                 expression[i] = new_var
             elif isinstance(v, Data):
                 v.reserved = False
@@ -37,21 +37,22 @@ class Math(Data):
         return obj.calculate_with_variable(obj.expression[:], var)
 
     @staticmethod
-    def calculate_plus_minus(expression, i=0):
+    def calculate_plus_minus(expression, i=1):
         while i < len(expression):
             sign = expression[i]
             if sign in ("+", "-"):
                 if not type(expression[i-1]) == str and not type(expression[i+1]) == str\
                         and not expression[i+1].reserved and not expression[i-1].reserved:
                     expression[i-1] = Math.do_math(expression, i, sign)
-                    i = 0 ; continue
-            i += 1
+                    continue
+            i += 2
         return expression
 
     @staticmethod
     def merge_rational_and_complex(expression, one, two, i):
         if isinstance(expression[one], Complex) \
-            and isinstance(expression[two], Rational):
+                and isinstance(expression[two], Rational) \
+                and expression[one].rational.number == 0:
             expression.pop(i)
             other = expression.pop(i if one < two else i-1)
             expression[i-1].rational = other
@@ -60,24 +61,24 @@ class Math(Data):
 
 
     @staticmethod
-    def fix_complex_numbers(expression, i=0):
+    def fix_complex_numbers(expression, i=1):
         while i < len(expression):
             if expression[i] in ("+", "-"):
                 if Math.merge_rational_and_complex(expression, i-1, i+1, i) or\
                     Math.merge_rational_and_complex(expression, i+1, i-1, i):
                     continue
-            i += 1
+            i += 2
 
     @staticmethod
-    def calculate(expression, i=0):
+    def calculate(expression, i=1):
         while i < len(expression):
             sign = expression[i]
             if sign in ("/", "%", "*", "^"):
                 if not Math.set_reserved(expression, i-1, i+1)\
                         and not Math.set_reserved(expression, i+1, i-1):
                     expression[i-1] = Math.do_math(expression, i, sign)
-                    i = 0 ; continue
-            i += 1
+                    continue
+            i += 2
         Math.fix_complex_numbers(expression)
         Math.calculate_plus_minus(expression)
         if len(expression) == 1:
@@ -88,10 +89,7 @@ class Math(Data):
     def do_math(expression, i, sign):
         expression.pop(i)
         other = expression.pop(i)
-        res = expression[i-1].math(sign, other)
-        if isinstance(other, Complex):
-            return Complex(str(res))
-        return res
+        return expression[i-1].math(sign, other)
 
 
     @staticmethod

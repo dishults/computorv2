@@ -26,16 +26,7 @@ class Variable:
                 var = Data.everything[var]
             else:
                 raise TypeError
-        var = self.check_if_var_should_be_negative(var)
         self.expression.append(var)
-
-    def check_if_var_should_be_negative(self, var):
-        try:
-            if self.expression[-1] == "-":
-                return -var
-        except:
-            pass
-        return var
 
     def at_least_one_processed_var(self):
         for e in self.expression:
@@ -46,14 +37,19 @@ class Variable:
     def find_variable(self, i, j=1):
         while i < len(self.expression):
             if self.expression[i] in ("+", "-"):
-                if type(self.expression[i+j]) != str and not self.expression[i+j].reserved:
+                if i == 1 and self.expression[i] == "-" and self.expression[i-1] == 0:
+                    pass
+                elif type(self.expression[i+j]) != str and not self.expression[i+j].reserved:
                     return i
             i += 1
         return -1
 
     def get_first(self, i, j=0):
-        self.expression.pop(i)
-        return self.expression.pop(i+j)
+        sign = self.expression.pop(i)
+        first = self.expression.pop(i+j)
+        if sign == "-":
+            first = -first
+        return first
 
     def get_second(self, s):
         sign = self.expression[s]
@@ -70,6 +66,9 @@ class Variable:
             while s >= 0:
                 sign, second = self.get_second(s)
                 second = first.math(sign, second)
+                if second < 0:
+                    second = -second
+                    self.expression[s] = "-"
                 self.expression[s+1] = second
                 f = s
                 s = self.find_variable(s + 2)

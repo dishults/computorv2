@@ -33,7 +33,7 @@ class Data:
         return self.this() + other
 
     def __sub__(self, other):
-        return self.__add__(other)
+        return self.this() - other
 
     def __pow__(self, other):
         return self.this() ** other

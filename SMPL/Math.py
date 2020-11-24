@@ -37,27 +37,6 @@ class Math(Data):
         return obj.calculate_with_variable(obj.expression[:], var)
 
     @staticmethod
-    def merge_rational_and_complex(expression, one, two, i):
-        if isinstance(expression[one], Complex) \
-                and isinstance(expression[two], Rational) \
-                and expression[one].rational.number == 0:
-            expression.pop(i)
-            other = expression.pop(i if one < two else i-1)
-            expression[i-1].rational = other
-            return True
-        return False
-
-
-    @staticmethod
-    def fix_complex_numbers(expression, i=1):
-        while i < len(expression):
-            if expression[i] in ("+", "-"):
-                if Math.merge_rational_and_complex(expression, i-1, i+1, i) or\
-                    Math.merge_rational_and_complex(expression, i+1, i-1, i):
-                    continue
-            i += 2
-
-    @staticmethod
     def calculate_plus_minus(expression, i=1):
         while i < len(expression):
             sign = expression[i]
@@ -84,7 +63,6 @@ class Math(Data):
     def calculate(expression, i=1):
         Math.calculate_high_precedence(expression, ("^",))
         Math.calculate_high_precedence(expression, ("/", "%", "*"))
-        Math.fix_complex_numbers(expression)
         Math.calculate_plus_minus(expression)
         if len(expression) == 1:
             return expression[0]

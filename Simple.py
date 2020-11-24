@@ -10,16 +10,9 @@ class Simple(Math, Variable):
         self.variable = variable
         self.reserved = False
         self.negative = False
-        starts_with_minus = False
         if expression[0] == "-":
-            expression = expression[1:]
-            starts_with_minus = True
+            expression = f"0{expression}"
         self.get_variables(expression)
-        if starts_with_minus:
-            if isinstance(self.expression[0], Number):
-                self.expression[0] = -self.expression[0]
-            else:
-                self.expression[0] = "-" + self.expression[0]
         self.calculate(self.expression)
         if len(self.expression) > 1:
             self.calculate_all_unreserved_vars()
@@ -39,6 +32,7 @@ class Simple(Math, Variable):
             f = brakets_or_not(self.expression[0])
         for e in self.expression[1:]:
             f = f"{f} {brakets_or_not(e)}"
+        f = f.replace("0 - ", "-")
         f = f.replace("+ -", "- ")
         f = f.replace("- -", "- ")
         return f
@@ -60,7 +54,7 @@ class Simple(Math, Variable):
                 else:
                     res = Simple(var, self.variable)
                     if len(res.expression) == 1:
-                        res = self.check_if_var_should_be_negative(res.expression[0])
+                        res = res.expression[0]
                 self.expression.append(res)
                 i = 0
             else:

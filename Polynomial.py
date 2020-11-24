@@ -48,8 +48,7 @@ class Polynomial(Data):
     def get_terms(self, expression, variable, inverse=False):
         previous = "+"
         if expression[0] == "-":
-            previous = "-"
-            expression = expression[1:]
+            expression = f"0{expression}"
         for sign in expression:
             if sign in ("+", "-"):
                 term, expression = expression.split(sign, 1)

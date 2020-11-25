@@ -33,53 +33,53 @@ class Rational(Number):
 
 class Complex(Number):
 
-    def __init__(self, rest):
-        self.reserved = False
-        try:
-            rational, imaginary = self.process_signs(rest)
-        except:
-            rational, imaginary = 0, self.strip_i(rest)
-        self.rational = self.convert_to_num(rational)
-        self.imaginary = self.convert_to_num(imaginary)
-
     def __truediv__(self, other):
-        rational, imaginary = self.get_rational_imaginary(other)
-        conjugate = self.return_c_number(rational, -imaginary)
+        real, imaginary = self.get_real_imaginary(other)
+        conjugate = self.get_complex_number(real, -imaginary)
         top = self.__mul__(conjugate)
-        bottom = other.__mul__(conjugate).rational
-        rational = top.rational / bottom
+        bottom = other.__mul__(conjugate).real
+        real = top.real / bottom
         imaginary = top.imaginary / bottom
-        return self.return_c_number(rational, imaginary)
+        return self.get_complex_number(real, imaginary)
 
     def __mod__(self, other):
         raise ArithmeticError
 
     def __mul__(self, other):
-        a, b = self.rational, self.imaginary
-        c, d = self.get_rational_imaginary(other)
-        rational = a * c - b * d
+        a, b = self.real, self.imaginary
+        c, d = self.get_real_imaginary(other)
+        real = a * c - b * d
         imaginary = a * d + b * c
-        return self.return_c_number(rational, imaginary)
+        return self.get_complex_number(real, imaginary)
 
     def __add__(self, other):
-        rational, imaginary = self.get_rational_imaginary(other)
-        rational = self.rational + rational
+        real, imaginary = self.get_real_imaginary(other)
+        real = self.real + real
         imaginary = self.imaginary + imaginary
-        return self.return_c_number(rational, imaginary)
+        return self.get_complex_number(real, imaginary)
 
     def __sub__(self, other):
-        rational, imaginary = self.get_rational_imaginary(other)
-        rational = self.rational - rational
+        real, imaginary = self.get_real_imaginary(other)
+        real = self.real - real
         imaginary = self.imaginary - imaginary
-        return self.return_c_number(rational, imaginary)
+        return self.get_complex_number(real, imaginary)
 
     def __pow__(self, other):
-        return self.do_math(other, lambda a, b: a ** b)
+        if not (isinstance(other, Rational) and type(other.number) == int):
+            raise ArithmeticError
+        n = other.number
+        if n == 0:
+            return Rational(1)
+        copy = self.get_complex_number(self.real, self.imaginary)
+        while n > 1:
+            copy = copy.__mul__(self)
+            n -= 1
+        return self.get_complex_number(copy.real, copy.imaginary)
 
     def __rtruediv__(self, other):
         if not isinstance(other, Complex):
-            rational, imaginary = self.get_rational_imaginary(other)
-            other = self.return_c_number(rational, imaginary)
+            real, imaginary = self.get_real_imaginary(other)
+            other = self.get_complex_number(real, imaginary)
         return Complex.__truediv__(other, self)
 
     def __rmod__(self, other):
@@ -87,23 +87,23 @@ class Complex(Number):
 
     def __rmul__(self, other):
         if not isinstance(other, Complex):
-            rational, imaginary = self.get_rational_imaginary(other)
-            other = self.return_c_number(rational, imaginary)
+            real, imaginary = self.get_real_imaginary(other)
+            other = self.get_complex_number(real, imaginary)
         return Complex.__mul__(other, self)
 
     def __rpow__(self, other):
-        return self.do_r_math(other, lambda a, b: a ** b)
+        raise ArithmeticError
 
     def __radd__(self, other):
         if not isinstance(other, Complex):
-            rational, imaginary = self.get_rational_imaginary(other)
-            other = self.return_c_number(rational, imaginary)
+            real, imaginary = self.get_real_imaginary(other)
+            other = self.get_complex_number(real, imaginary)
         return Complex.__add__(other, self)
 
     def __rsub__(self, other):
         if not isinstance(other, Complex):
-            rational, imaginary = self.get_rational_imaginary(other)
-            other = self.return_c_number(rational, imaginary)
+            real, imaginary = self.get_real_imaginary(other)
+            other = self.get_complex_number(real, imaginary)
         return Complex.__sub__(other, self)
 
     operations = {
@@ -115,32 +115,22 @@ class Complex(Number):
         "-" : __sub__,
     }
 
-    def do_math(self, other, f):
+    def __init__(self, rest):
+        self.reserved = False
         try:
-            rational = f(self.rational, other)
+            real, imaginary = self.process_signs(rest)
         except:
-            rational = self.rational
-        imaginary = f(self.imaginary, other)
-        return self.return_c_number(rational, imaginary)
-
-    def do_r_math(self, other, f):
-        try:
-            rational = f(other, self.rational)
-        except:
-            rational = self.rational
-        imaginary = f(other, self.imaginary)
-        return self.return_c_number(rational, imaginary)
-
-    def this(self):
-        return self.rational
+            real, imaginary = 0, self.strip_i(rest)
+        self.real = self.convert_to_num(real)
+        self.imaginary = self.convert_to_num(imaginary)
 
     def __str__(self):
-        if self.rational != 0:
+        if self.real != 0:
             if self.imaginary >= 0:
                 sign = "+"
             else:
                 sign = "-"
-            return f"{self.rational} {sign} {abs(self.imaginary)}i"
+            return f"{self.real} {sign} {abs(self.imaginary)}i"
         else:
             if self.imaginary == 1:
                 return "i"
@@ -153,17 +143,17 @@ class Complex(Number):
         if "-" in rest[1:]:
             if rest[0] == "-":
                 rest1 = rest[1:]
-                rational, imaginary = rest1.split("-")
-                rational = "-" + rational
+                real, imaginary = rest1.split("-")
+                real = "-" + real
             else:
-                rational, imaginary = rest.split("-")
+                real, imaginary = rest.split("-")
             imaginary = "-" + imaginary
         else:
-            rational, imaginary = rest.split("+")
-        if "i" in rational:
-            rational, imaginary = imaginary, rational
+            real, imaginary = rest.split("+")
+        if "i" in real:
+            real, imaginary = imaginary, real
         imaginary = self.strip_i(imaginary)
-        return rational, imaginary
+        return real, imaginary
 
     @staticmethod
     def strip_i(imaginary):
@@ -186,23 +176,23 @@ class Complex(Number):
         return False
 
     @staticmethod
-    def return_c_number(rational, imaginary):
+    def get_complex_number(real, imaginary):
         if imaginary >= 0:
-            return Complex(f"{rational}+{imaginary}")
-        return Complex(f"{rational}{imaginary}")
+            return Complex(f"{real}+{imaginary}")
+        return Complex(f"{real}{imaginary}")
 
     @staticmethod
-    def get_rational_imaginary(other):
+    def get_real_imaginary(other):
         if Data.is_number(other):
-            rational = other
+            real = other
             imaginary = 0
         elif isinstance(other, Rational):
-            rational = other.number
+            real = other.number
             imaginary = 0
         elif isinstance(other, Complex):
-            rational = other.rational
+            real = other.real
             imaginary = other.imaginary
-        return rational, imaginary
+        return real, imaginary
 
 
 def number(number):

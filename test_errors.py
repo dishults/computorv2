@@ -44,6 +44,10 @@ class Tests(unittest.TestCase):
             "4 % 0",
             "4 / 0 = ?",
             "4 / 0",
+            "2 ^ (2 + 3i)",
+            "(2 + 3i) ^ (2 + 3i)",
+            "(2 + 3i) ^ 3.1",
+            #"(2 + 3i) ^ -1",
         ])
     
     def test_syntax(self):

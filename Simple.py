@@ -13,6 +13,7 @@ class Simple(Math, Variable):
         if expression[0] == "-":
             expression = f"0{expression}"
         self.get_variables(expression)
+        self.check_variables()
         self.calculate(self.expression)
         if len(self.expression) > 1:
             self.calculate_all_unreserved_vars()
@@ -62,6 +63,12 @@ class Simple(Math, Variable):
                 i += 1
         if expression and expression != ")":
             self.process_variable(expression)
+
+    def check_variables(self):
+        instances = sum(1 for v in self.expression if isinstance(v, Data) or v == self.variable)
+        operators = sum(1 for v in self.expression if v in ("+", "-", "/", "%", "*", "^"))
+        if instances - 1 != operators:
+            raise SyntaxError
 
     @staticmethod
     def fix_negatives(expression, i=0):

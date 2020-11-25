@@ -44,6 +44,13 @@ def check_input(user_input, allowed_chars=".,*/%+-^()[;]=?0123456789"):
                 if Data.is_number(char) or char in ",*/%+-^()[;]":
                     continue
             raise SyntaxError
+    if allowed_chars:
+        bad_combos = {"[]", "()", ",,", "[;]", "[;", ";]", "[,", ",]"}
+        if any(bad_combo in user_input for bad_combo in bad_combos) \
+                or user_input.count("(") != user_input.count(")") \
+                or user_input.count("[") != user_input.count("]"):
+            raise SyntaxError
+
 
 def process_input(user_input):
     user_input = user_input.lower().replace(" ", "")

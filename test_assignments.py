@@ -18,6 +18,7 @@ class Tests(unittest.TestCase):
             ["v = 42.", "42.0"],
             ["v = ?",   "42.0"],
             ["v",       "42.0"],
+            ["s = +4",  "4"],
         ])
 
     def test_imaginary_numbers(self):

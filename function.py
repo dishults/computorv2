@@ -41,7 +41,23 @@ def save_function(name, rest, var=0):
         if "^" in rest and var in rest and not "(" in rest:
             return Polynomial.process(name, rest, var)
     return Simple.process(name, rest, var)
-
+"""
+def fix_negatives(expression, i=0):
+    while i < len(expression):
+        if expression[i] in "^*/%" and expression[i+1] == "-":
+            start = i+1
+            i += 2
+            while i < len(expression) and not expression[i] in "+-^*/%":
+                i += 1
+            if i != len(expression):
+                end = expression[i:]
+            else:
+                end = ""
+            expression = expression[:start] + "(-" + expression[start+1:i] + ")" + end
+            i += 1
+        i += 1
+    return expression
+"""
 
 def process_function(name, rest):
     if name:

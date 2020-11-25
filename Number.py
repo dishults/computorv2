@@ -65,7 +65,8 @@ class Complex(Number):
         return self.get_complex_number(real, imaginary)
 
     def __pow__(self, other):
-        if not (isinstance(other, Rational) and type(other.number) == int):
+        if not (isinstance(other, Rational) and type(other.number) == int \
+                and other.number >= 0):
             raise ArithmeticError
         n = other.number
         if n == 0:

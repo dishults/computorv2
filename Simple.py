@@ -38,6 +38,7 @@ class Simple(Math, Variable):
         return f
 
     def get_variables(self, expression):
+        expression = self.fix_negatives(expression)
         i = 0
         while i < len(expression):
             sign = expression[i]
@@ -61,6 +62,26 @@ class Simple(Math, Variable):
                 i += 1
         if expression and expression != ")":
             self.process_variable(expression)
+
+    @staticmethod
+    def fix_negatives(expression, i=0):
+        for operation in ("^-", "*-", "/-", "%-"):
+            if operation in expression:
+                while i < len(expression):
+                    if expression[i] in "^*/%" and expression[i+1] == "-":
+                        start = i+1
+                        i += 2
+                        while i < len(expression) and not expression[i] in "+-^*/%":
+                            i += 1
+                        if i != len(expression):
+                            end = expression[i:]
+                        else:
+                            end = ""
+                        expression = f"{expression[:start]}(-{expression[start+1:i]}){end}"
+                        i += 1
+                    i += 1
+                break
+        return expression
 
     @staticmethod
     def what_braket(expression, braket=0):

@@ -47,7 +47,7 @@ class Tests(unittest.TestCase):
             "2 ^ (2 + 3i)",
             "(2 + 3i) ^ (2 + 3i)",
             "(2 + 3i) ^ 3.1",
-            #"(2 + 3i) ^ -1",
+            "(2 + 3i) ^ -1",
         ])
     
     def test_syntax(self):

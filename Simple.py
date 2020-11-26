@@ -23,7 +23,8 @@ class Simple(Math, Variable):
     def __str__(self):
 
         def brakets_or_not(e):
-            if isinstance(e, Complex) or isinstance(e, Simple):
+            if (isinstance(e, Complex) and e.real and e.imaginary) \
+                    or isinstance(e, Simple):
                 return f"({e})"
             return f"{e}"
 

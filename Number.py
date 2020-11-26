@@ -81,7 +81,7 @@ class Complex(Number):
         if not isinstance(other, Complex):
             real, imaginary = self.get_real_imaginary(other)
             other = self.get_complex_number(real, imaginary)
-        return Complex.__truediv__(other, self)
+        return other.__truediv__(self)
 
     def __rmod__(self, other):
         raise ArithmeticError
@@ -90,7 +90,7 @@ class Complex(Number):
         if not isinstance(other, Complex):
             real, imaginary = self.get_real_imaginary(other)
             other = self.get_complex_number(real, imaginary)
-        return Complex.__mul__(other, self)
+        return other.__mul__(self)
 
     def __rpow__(self, other):
         raise ArithmeticError
@@ -99,13 +99,13 @@ class Complex(Number):
         if not isinstance(other, Complex):
             real, imaginary = self.get_real_imaginary(other)
             other = self.get_complex_number(real, imaginary)
-        return Complex.__add__(other, self)
+        return other.__add__(self)
 
     def __rsub__(self, other):
         if not isinstance(other, Complex):
             real, imaginary = self.get_real_imaginary(other)
             other = self.get_complex_number(real, imaginary)
-        return Complex.__sub__(other, self)
+        return other.__sub__(self)
 
     operations = {
         "/" : __truediv__,
@@ -116,41 +116,49 @@ class Complex(Number):
         "-" : __sub__,
     }
 
-    def __init__(self, rest):
+    def __init__(self, expression):
+        expression = expression.replace("*i", "i")
         self.reserved = False
         try:
-            real, imaginary = self.process_signs(rest)
+            real, imaginary = self.process_signs(expression)
         except:
-            real, imaginary = 0, self.strip_i(rest)
+            real, imaginary = 0, self.strip_i(expression)
         self.real = self.convert_to_num(real)
-        self.imaginary = self.convert_to_num(imaginary)
+        try:
+            self.imaginary = self.convert_to_num(imaginary)
+        except:
+            self.imaginary = 1
 
     def __str__(self):
-        if self.real != 0:
-            if self.imaginary >= 0:
+        if self.real:
+            if not self.imaginary:
+                return f"{self.real}"
+            elif self.imaginary > 0:
                 sign = "+"
             else:
                 sign = "-"
             return f"{self.real} {sign} {abs(self.imaginary)}i"
         else:
-            if self.imaginary == 1:
-                return "i"
-            elif self.imaginary == 0:
+            if not self.imaginary:
                 return "0"
+            elif self.imaginary == 1:
+                return "i"
+            elif self.imaginary == -1:
+                return "-i"
             else:
                 return f"{self.imaginary}i"
 
-    def process_signs(self, rest):
-        if "-" in rest[1:]:
-            if rest[0] == "-":
-                rest1 = rest[1:]
-                real, imaginary = rest1.split("-")
+    def process_signs(self, expression):
+        if "-" in expression[1:]:
+            if expression[0] == "-":
+                expression = expression[1:]
+                real, imaginary = expression.split("-")
                 real = "-" + real
             else:
-                real, imaginary = rest.split("-")
+                real, imaginary = expression.split("-")
             imaginary = "-" + imaginary
         else:
-            real, imaginary = rest.split("+")
+            real, imaginary = expression.split("+")
         if "i" in real:
             real, imaginary = imaginary, real
         imaginary = self.strip_i(imaginary)

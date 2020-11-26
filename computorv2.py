@@ -17,7 +17,6 @@ def process_type(name, rest):
     elif "[" in rest:
         return Matrix.process(name, rest)
     elif "i" in rest:
-        rest = rest.replace("*i", "i")
         if Complex.is_expression(rest):
             return f.process_function(name, rest)
         else:

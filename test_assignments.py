@@ -58,6 +58,10 @@ class Tests(unittest.TestCase):
 
     def test_functions(self):
         self.do([
+            ["f(x) = 0 + x",                         "x"],
+            ["f(x) = 0 - x",                         "-x"],
+            ["f(x) = x + 0",                         "x"],
+            ["f(x) = x - 0",                         "x"],
             ["f(z) = -z * 2 + 1",                    "-z * 2 + 1"],
             ["f(x) = 2 * x - 5",                     "2 * x - 5"],
             ["f(x) = 4x^2 - 5*x^1 + 4x^0",           "4 * x^2 - 5x + 4"],

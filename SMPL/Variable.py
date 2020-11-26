@@ -30,7 +30,7 @@ class Variable:
 
     def at_least_one_processed_var(self):
         for e in self.expression:
-            if isinstance(e, Data):
+            if isinstance(e, Data) or (self.variable and e == self.variable):
                 return True
         return False
 
@@ -44,9 +44,9 @@ class Variable:
             i += 1
         return -1
 
-    def get_first(self, i, j=0):
+    def get_first(self, i):
         sign = self.expression.pop(i)
-        first = self.expression.pop(i+j)
+        first = self.expression.pop(i)
         if sign == "-":
             first = -first
         return first
@@ -57,11 +57,12 @@ class Variable:
         return sign, second
 
     def calculate_all_unreserved_vars(self, f=-1, s=-1):
-        f = self.find_variable(0, -1)
+        self.expression = [number(0), "+"] + self.expression
+        f = self.find_variable(0)
         if f >= 0:
-            s = self.find_variable(f + 1)
+            s = self.find_variable(f+1)
         if s >= 0:
-            first = self.get_first(f, -1)
+            first = self.get_first(f)
             s -= 2
             while s >= 0:
                 sign, second = self.get_second(s)
@@ -71,7 +72,11 @@ class Variable:
                     self.expression[s] = "-"
                 self.expression[s+1] = second
                 f = s
-                s = self.find_variable(s + 2)
+                s = self.find_variable(s+2)
                 if s >= 0:
                     first = self.get_first(f)
                     s -= 2
+        while self.expression[0] == 0 and self.expression[1] == "+":
+            del self.expression[:2]
+        while self.expression[-1] == 0 and self.expression[-2] in "+-":
+            del self.expression[-2:]

@@ -106,4 +106,16 @@ class Data:
                 except:
                     return False
         return True
-    
+
+    @staticmethod
+    def what_braket(expression, braket=0, opening="(", closing=")"):
+        braket = braket
+        for i, char in enumerate(expression):
+            if char == opening:
+                braket += 1
+            elif char == closing:
+                if not braket:
+                    break
+                else:
+                    braket -= 1
+        return i

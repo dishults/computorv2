@@ -1,5 +1,6 @@
 from Data import Data
 from Number import Number, Rational, Complex, number
+from Matrix import Matrix
 from SMPL.Math import Math
 from SMPL.Variable import Variable
 
@@ -44,11 +45,20 @@ class Simple(Math, Variable):
         i = 0
         while i < len(expression):
             sign = expression[i]
-            if sign in ("+", "-", "/", "%", "*", "^"):
+            if sign in ("+", "-", "/", "%", "^"):
                 var, expression = expression.split(sign, 1)
                 if var:
                     self.process_variable(var)
                     i = 0
+                self.expression.append(sign)
+            elif sign == "*":
+                var, expression = expression.split(sign, 1)
+                if var:
+                    self.process_variable(var)
+                    i = 0
+                if expression.startswith("*"):
+                    sign = "**"
+                    expression = expression[1:]
                 self.expression.append(sign)
             elif sign == "(":
                 func, var, expression = self.get_function_and_variable(expression, i)
@@ -60,6 +70,10 @@ class Simple(Math, Variable):
                         res = res.expression[0]
                 self.expression.append(res)
                 i = 0
+            elif sign == "[":
+                matrix, expression = Matrix.get_matrix_from_expression(expression)
+                self.expression.append(Matrix(f"{matrix}"))
+                i = 0
             else:
                 i += 1
         if expression and expression != ")":
@@ -67,7 +81,7 @@ class Simple(Math, Variable):
 
     def check_variables(self):
         instances = sum(1 for v in self.expression if isinstance(v, Data) or v == self.variable)
-        operators = sum(1 for v in self.expression if v in ("+", "-", "/", "%", "*", "^"))
+        operators = sum(1 for v in self.expression if v in ("+", "-", "/", "%", "^", "*", "**"))
         if instances - 1 != operators:
             raise SyntaxError
 
@@ -92,26 +106,13 @@ class Simple(Math, Variable):
         return expression
 
     @staticmethod
-    def what_braket(expression, braket=0):
-        braket = braket
-        for i, char in enumerate(expression):
-            if char == "(":
-                braket += 1
-            elif char == ")":
-                if not braket:
-                    break
-                else:
-                    braket -= 1
-        return i
-
-    @staticmethod
     def get_function_and_variable(expression, i=None, func=0):
         if "=" in expression:
             expression = expression.split("=")[0]
         if i == None:
             i = expression.index("(")
         if i:
-            braket = Simple.what_braket(expression, -1)
+            braket = Data.what_braket(expression, -1)
             func = expression[:i]
             while func and not func.isalpha():
                 for c in func:
@@ -119,7 +120,7 @@ class Simple(Math, Variable):
                         func = func.split(c)[-1]
                         break
         else:
-            braket = Simple.what_braket(expression[1:]) + 1
+            braket = Data.what_braket(expression[1:]) + 1
         var = expression[i+1:braket]
         expression = expression[braket+1:]
         return func, var, expression

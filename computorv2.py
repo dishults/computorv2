@@ -15,11 +15,10 @@ def process_type(name, rest):
     if Data.is_number(rest):
         return Rational.process(name, rest)
     elif "[" in rest:
-        return Matrix.process(name, rest)
+        if not Matrix.is_expression(rest):        
+            return Matrix.process(name, rest)
     elif "i" in rest:
-        if Complex.is_expression(rest):
-            return f.process_function(name, rest)
-        else:
+        if not Complex.is_expression(rest):
             return Complex.process(name, rest)
     elif rest in Data.everything:
         return Data.process_data(name, rest)
@@ -44,7 +43,8 @@ def check_input(user_input, allowed_chars=".,*/%+-^()[;]=?0123456789"):
                     continue
             raise SyntaxError
     if allowed_chars:
-        bad_combos = {"[]", "()", ",,", "[;]", "[;", ";]", "[,", ",]"}
+        bad_combos = {"[]", "()", ",,", "[;]", "[;", ";]", "[,", ",]", "[[[", "]]]", \
+            ";[[", "]];"}
         if any(bad_combo in user_input for bad_combo in bad_combos) \
                 or user_input.count("(") != user_input.count(")") \
                 or user_input.count("[") != user_input.count("]"):

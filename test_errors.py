@@ -47,6 +47,12 @@ class Tests(unittest.TestCase):
             "(2 + 3i) ^ 3.1",
             "(2 + 3i) ^ -1",
         ])
+
+    def test_matricies(self):
+        self.do([
+            #"[[1];[2]] ** [3,4]",
+            #"[3,4] ** [1,2,3]",
+        ])
     
     def test_syntax(self):
         self.do([
@@ -68,6 +74,7 @@ class Tests(unittest.TestCase):
             "s = y",
             "s = f(x)",
             "f( = 4", "f) = 4", "f(x = 4)", "f(=)",
+            "m = [[[1,2];[2,1]];[[1,2];[2,1]]]",  "[[1,2];[2,1]];[[1,2];[2,1]]",
         ])
 
 if __name__ == "__main__":

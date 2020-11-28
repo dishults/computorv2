@@ -49,8 +49,6 @@ class Tests(unittest.TestCase):
 
     def test_matricies(self):
         self.do([
-            ["m = [[[1,2];[2,1]];[[1,2];[2,1]]]",
-                "[ 1 , 2 ]\n  [ 2 , 1 ]\n  [ 1 , 2 ]\n  [ 2 , 1 ]"],
             ["m = [[3+4i, 2-3i]]", "[ 3 + 4i , 2 - 3i ]"],
             ["m = ?",              "[ 3 + 4i , 2 - 3i ]"],
             ["m"    ,              "[ 3 + 4i , 2 - 3i ]"],

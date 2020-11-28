@@ -25,7 +25,11 @@ class Rational(Number):
         return self.number == other
 
     def math(self, sign, other):
-        return number(super().math(sign, other))
+        res = super().math(sign, other)
+        try:
+            return number(res)
+        except:
+            return res
     
     def this(self):
         return self.number

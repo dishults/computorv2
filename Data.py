@@ -1,3 +1,5 @@
+ALLOWED = ("+", "-", "/", "%", "^", "*", "@")
+
 class Data:
 
     everything = {}

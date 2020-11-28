@@ -1,5 +1,6 @@
 from Data import Data
 from Number import Number, Rational, Complex
+from Matrix import Matrix
 from Simple import Simple
 from Polynomial import Polynomial
 
@@ -43,7 +44,9 @@ def save_function(name, rest, var=0):
     return Simple.process(name, rest, var)
 
 def process_function(name, rest):
+    #rest = Matrix.fix_dot_operator(rest)
     if name:
+        #name = Matrix.fix_dot_operator(name)
         return save_function(name, rest)
     else:
         if "=" in rest:

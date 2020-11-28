@@ -7,7 +7,7 @@ import function as f
 
 from Number import Rational, Complex
 
-from Data import Data
+from Data import Data, ALLOWED
 from Simple import Simple
 from Matrix import Matrix
 
@@ -30,16 +30,18 @@ def check_name(name):
         if func == "i" or var == "i" or expression:
             raise SyntaxError
         name = func + var
-    for char in ".,*/%+-^[;]=0123456789":
+    for char in ".,[;]=0123456789" or ALLOWED:
         name = name.replace(char, "")
     if not name or name == "i":
         raise SyntaxError
 
-def check_input(user_input, allowed_chars=".,*/%+-^()[;]=?0123456789"):
+def check_input(user_input, allowed_chars=".,()[;]=?0123456789"):
+    if allowed_chars:
+        allowed_chars = allowed_chars + "".join(ALLOWED)
     for char in user_input:
         if not char.isalpha() and not char in allowed_chars:
             if "(" in user_input:
-                if Data.is_number(char) or char in ",*/%+-^()[;]":
+                if Data.is_number(char) or char in ",()[;]" or ALLOWED:
                     continue
             raise SyntaxError
     if allowed_chars:
@@ -52,7 +54,7 @@ def check_input(user_input, allowed_chars=".,*/%+-^()[;]=?0123456789"):
 
 
 def process_input(user_input):
-    user_input = user_input.lower().replace(" ", "")
+    user_input = user_input.lower().replace(" ", "").replace("**", "@")
     check_input(user_input)
     if "=" in user_input and not user_input.endswith("?"):
         name, rest = user_input.split("=")

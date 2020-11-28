@@ -79,10 +79,11 @@ class Matrix(Data):
     def __pow__(self, other):
         return self.do_math(other, lambda a, b: a ** b)
 
-    def __dot__(self, other):
+    def __matmul__(self, other):
+        """Dot product"""
         if isinstance(other, Matrix):
             return self.dot(self, other)
-        return self.do_math(other, lambda a, b: a ** b)
+        return self.__pow__(other)
 
 
     def __radd__(self, other):
@@ -118,21 +119,21 @@ class Matrix(Data):
         "^" : __pow__,
         "+" : __add__,
         "-" : __sub__,
-        "**" : __dot__,
+        "@" : __matmul__,
     }
 
     def do_math(self, other, f):
-        """Peform math operation [f] (+ - * / **) on [self] and [other].
+        """Peform math operation [f] (+ - * / ^) on [self] and [other].
 
         Keyword arguments:
         other -- Matrix or int/float
-        f -- function with operation (+ - * / **) to perform
+        f -- function with operation (+ - * / ^) to perform
         """
 
         res = []
         # if both are 1D arrays (both lists)
         try:
-            assert len(self) == len(other)
+            assert self.dimentions == other.dimentions
             try:
                 for i in range(len(other)):
                     res.append(f(self[i], other[i]))
@@ -149,6 +150,9 @@ class Matrix(Data):
             except:
                 for item in self:
                     res.append(f(item, other))
+        if type(res[0]) == list and len(res[0]) == 1:
+            for i in range(len(res)):
+                res[i] = res[i][0].matrix
         return Matrix(res)
 
     @staticmethod
@@ -174,11 +178,11 @@ class Matrix(Data):
 
         C = []
         B_t = Matrix.transpose(B.matrix)
-        if type(A[0]) == list:
+        if A.dimentions == 2:
             for a_row in A:
                 row = calc(a_row, B_t)
                 C.append(row)
-        elif type(B[0]) == list:
+        elif B.dimentions == 2:
             C = calc(A, B_t)
         else:
             return Rational(dot(A, B))
@@ -217,3 +221,10 @@ class Matrix(Data):
         matrix = expression[:braket]
         expression = expression[braket:]
         return matrix, expression
+
+    #@staticmethod
+    #def fix_dot_operator(expression):
+    #    try:
+    #        return expression.replace("**", "@")
+    #    except:
+    #        return expression

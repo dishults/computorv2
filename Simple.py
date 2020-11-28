@@ -1,4 +1,4 @@
-from Data import Data
+from Data import Data, ALLOWED
 from Number import Number, Rational, Complex, number
 from Matrix import Matrix
 from SMPL.Math import Math
@@ -45,20 +45,11 @@ class Simple(Math, Variable):
         i = 0
         while i < len(expression):
             sign = expression[i]
-            if sign in ("+", "-", "/", "%", "^"):
+            if sign in ALLOWED:
                 var, expression = expression.split(sign, 1)
                 if var:
                     self.process_variable(var)
                     i = 0
-                self.expression.append(sign)
-            elif sign == "*":
-                var, expression = expression.split(sign, 1)
-                if var:
-                    self.process_variable(var)
-                    i = 0
-                if expression.startswith("*"):
-                    sign = "**"
-                    expression = expression[1:]
                 self.expression.append(sign)
             elif sign == "(":
                 func, var, expression = self.get_function_and_variable(expression, i)
@@ -73,7 +64,6 @@ class Simple(Math, Variable):
             elif sign == "[":
                 matrix, expression = Matrix.get_matrix_from_expression(expression)
                 self.expression.append(Matrix(f"{matrix}"))
-                i = 0
             else:
                 i += 1
         if expression and expression != ")":
@@ -81,19 +71,19 @@ class Simple(Math, Variable):
 
     def check_variables(self):
         instances = sum(1 for v in self.expression if isinstance(v, Data) or v == self.variable)
-        operators = sum(1 for v in self.expression if v in ("+", "-", "/", "%", "^", "*", "**"))
+        operators = sum(1 for v in self.expression if v in ALLOWED)
         if instances - 1 != operators:
             raise SyntaxError
 
     @staticmethod
     def fix_negatives(expression, i=0):
-        for operation in ("^-", "*-", "/-", "%-"):
+        for operation in ("^-", "*-", "/-", "%-", "@-"):
             if operation in expression:
                 while i < len(expression):
-                    if expression[i] in "^*/%" and expression[i+1] == "-":
+                    if expression[i] in ALLOWED and expression[i+1] == "-":
                         start = i+1
                         i += 2
-                        while i < len(expression) and not expression[i] in "+-^*/%":
+                        while i < len(expression) and not expression[i] in ALLOWED:
                             i += 1
                         if i != len(expression):
                             end = expression[i:]

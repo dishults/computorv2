@@ -62,7 +62,7 @@ class Math(Data):
     @staticmethod
     def calculate(expression, i=1):
         Math.calculate_high_precedence(expression, ("^",))
-        Math.calculate_high_precedence(expression, ("/", "%", "*", "**"))
+        Math.calculate_high_precedence(expression, ("/", "%", "*", "@"))
         Math.calculate_plus_minus(expression)
         if len(expression) == 1:
             return expression[0]

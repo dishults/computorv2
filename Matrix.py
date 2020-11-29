@@ -136,8 +136,10 @@ class Matrix(Data):
 
         res = []
         # Both are Matricies of same dimentions (2D or 1D)
-        try:
-            assert self.dimentions == other.dimentions
+        if isinstance(other, Matrix) and self.dimentions == other.dimentions:
+            if len(self) != len(other):
+                raise ArithmeticError(
+                "Matricies should be of the same length to do that operation")
             # Both 2D (multiple columns) or 1D (one row)
             try:
                 for i in range(len(other)):
@@ -147,7 +149,7 @@ class Matrix(Data):
                 for i in range(len(other)):
                     row = f(self[i][0], other[i][0])
                     res.append([Rational(row)])
-        except:
+        else:
             # self 2D and other 1D or scalar
             try:
                 if self.dimentions == 2:
@@ -186,15 +188,23 @@ class Matrix(Data):
                 res.append(dot(x, y))
             return res
 
+        error_msg = "Number of A columns should be equal to the number of B rows." \
+                    + "\nOr both should have one row and same length"
         C = []
         B_t = Matrix.transpose(B.matrix)
         if A.dimentions == 2:
+            if len(A[0]) != len(B_t[0]):
+                raise ArithmeticError(error_msg)
             for a_row in A:
                 row = calc(a_row, B_t)
                 C.append(row)
         elif B.dimentions == 2:
+            if len(A) != len(B):
+                raise ArithmeticError(error_msg)
             C = calc(A, B_t)
         else:
+            if len(A) != len(B):
+                raise ArithmeticError(error_msg)
             return Rational(dot(A, B))
 
         if len(C) == 1:

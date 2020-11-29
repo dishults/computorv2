@@ -140,7 +140,8 @@ class Matrix(Data):
             # if both have just one column
             except:
                 for i in range(len(other)):
-                    res.append(f(self[i][0], other[i][0]))
+                    row = f(self[i][0], other[i][0])
+                    res.append([Rational(row)])
         except:
             # if self is 2D array and other is int/float
             try:
@@ -150,7 +151,7 @@ class Matrix(Data):
             except:
                 for item in self:
                     res.append(f(item, other))
-        if type(res[0]) == list and len(res[0]) == 1:
+        if type(res[0]) == list and len(res[0]) == 1 and isinstance(res[0][0], Matrix):
             for i in range(len(res)):
                 res[i] = res[i][0].matrix
         return Matrix(res)

@@ -126,31 +126,40 @@ class Matrix(Data):
         """Peform math operation [f] (+ - * / ^) on [self] and [other].
 
         Keyword arguments:
-        other -- Matrix or int/float
+        other -- Matrix (2D or 1D) or scalar
         f -- function with operation (+ - * / ^) to perform
         """
 
+        def calc_diff_dimentions(two_d, one_d):
+            for row in two_d:
+                res.append([f(item, one_d) for item in row])
+
         res = []
-        # if both are 1D arrays (both lists)
+        # Both are Matricies of same dimentions (2D or 1D)
         try:
             assert self.dimentions == other.dimentions
+            # Both 2D (multiple columns) or 1D (one row)
             try:
                 for i in range(len(other)):
                     res.append(f(self[i], other[i]))
-            # if both have just one column
+            # Both 2D with just one column
             except:
                 for i in range(len(other)):
                     row = f(self[i][0], other[i][0])
                     res.append([Rational(row)])
         except:
-            # if self is 2D array and other is int/float
+            # self 2D and other 1D or scalar
             try:
-                for row in self:
-                    res.append([f(item, other) for item in row])
-            # if self is 1D array and other is int/float
+                if self.dimentions == 2:
+                    calc_diff_dimentions(self, other)
+                # self 1D and other 2D
+                else:
+                    calc_diff_dimentions(other, self)
             except:
+                # self 1D and other scalar
                 for item in self:
                     res.append(f(item, other))
+    
         if type(res[0]) == list and len(res[0]) == 1 and isinstance(res[0][0], Matrix):
             for i in range(len(res)):
                 res[i] = res[i][0].matrix

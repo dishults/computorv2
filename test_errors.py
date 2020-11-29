@@ -50,8 +50,10 @@ class Tests(unittest.TestCase):
 
     def test_matricies(self):
         self.do([
-            #"[[1];[2]] ** [3,4]",
-            #"[3,4] ** [1,2,3]",
+            "[3,4] ** [1,2,3]",
+            #"[3,4] * [1,2,3]",
+            #"[3,4,5] ** [1,2]",
+            #"[3,4,5] * [1,2]",
         ])
     
     def test_syntax(self):

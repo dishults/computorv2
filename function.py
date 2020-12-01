@@ -31,10 +31,13 @@ def calculate_function(expression, rest=None):
     try:
         assert not rest
         return Simple.process(0, expression)
-    except (AssertionError, ValueError):
+    except (AssertionError, ValueError) as ex:
         if rest and "(" in rest:
             rest = process_expressions_in_variables(rest)
-        return Polynomial.calculate(expression, rest)
+        try:
+            return Polynomial.calculate(expression, rest)
+        except:
+            raise ValueError(ex)
 
 def save_function(name, rest, var=0):
     if "(" in name:
@@ -44,9 +47,7 @@ def save_function(name, rest, var=0):
     return Simple.process(name, rest, var)
 
 def process_function(name, rest):
-    #rest = Matrix.fix_dot_operator(rest)
     if name:
-        #name = Matrix.fix_dot_operator(name)
         return save_function(name, rest)
     else:
         if "=" in rest:

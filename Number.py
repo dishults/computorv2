@@ -47,7 +47,7 @@ class Complex(Number):
         return self.get_complex_number(real, imaginary)
 
     def __mod__(self, other):
-        raise ArithmeticError
+        raise ArithmeticError("Can't mod complex numbers")
 
     def __mul__(self, other):
         a, b = self.real, self.imaginary
@@ -71,7 +71,7 @@ class Complex(Number):
     def __pow__(self, other):
         if not (isinstance(other, Rational) and type(other.number) == int \
                 and other.number >= 0):
-            raise ArithmeticError
+            raise ArithmeticError("The power should be a scalar bigger or equal to 0")
         n = other.number
         if n == 0:
             return Rational(1)
@@ -88,7 +88,7 @@ class Complex(Number):
         return other.__truediv__(self)
 
     def __rmod__(self, other):
-        raise ArithmeticError
+        return self.__mod__(other)
 
     def __rmul__(self, other):
         if not isinstance(other, Complex):
@@ -97,7 +97,7 @@ class Complex(Number):
         return other.__mul__(self)
 
     def __rpow__(self, other):
-        raise ArithmeticError
+        raise ArithmeticError("Can't raise to a complex power, try scalar instead")
 
     def __radd__(self, other):
         if not isinstance(other, Complex):

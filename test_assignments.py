@@ -69,6 +69,7 @@ class Tests(unittest.TestCase):
             ["f(x) = (x + 2) / 2",                   "(x + 2) / 2"],
             ["f(x) = ?",                             "(x + 2) / 2"],
             ["f(x)",                                 "(x + 2) / 2"],
+            ["f(x) = x * x",                         "x * x"],
         ])
 
 

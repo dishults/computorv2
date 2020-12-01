@@ -18,8 +18,6 @@ class Simple(Math, Variable):
         self.calculate(self.expression)
         if len(self.expression) > 1:
             self.calculate_all_unreserved_vars()
-        if not self.at_least_one_processed_var():
-            raise SyntaxError
 
     def __str__(self):
 
@@ -73,7 +71,7 @@ class Simple(Math, Variable):
         instances = sum(1 for v in self.expression if isinstance(v, Data) or v == self.variable)
         operators = sum(1 for v in self.expression if v in ALLOWED)
         if instances - 1 != operators:
-            raise SyntaxError
+            raise SyntaxError("Check variables and operators")
 
     @staticmethod
     def fix_negatives(expression, i=0):

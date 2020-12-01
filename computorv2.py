@@ -28,12 +28,14 @@ def check_name(name):
     if "(" in name:
         func, var, expression = Simple.get_function_and_variable(name)
         if func == "i" or var == "i" or expression:
-            raise SyntaxError
+            raise SyntaxError("You can't use 'i' as a function/variable name")
         name = func + var
     for char in ".,[;]=0123456789" or ALLOWED:
         name = name.replace(char, "")
-    if not name or name == "i":
-        raise SyntaxError
+    if name == "i":
+        raise SyntaxError("You can't use 'i' as a function/variable name")
+    if not name:
+        raise SyntaxError("Incorrect syntax")
 
 def check_input(user_input, allowed_chars=".,()[;]=?0123456789"):
     if allowed_chars:
@@ -43,14 +45,14 @@ def check_input(user_input, allowed_chars=".,()[;]=?0123456789"):
             if "(" in user_input:
                 if Data.is_number(char) or char in ",()[;]" or ALLOWED:
                     continue
-            raise SyntaxError
+            raise SyntaxError(f"Forbidden character '{char}'")
     if allowed_chars:
         bad_combos = {"[]", "()", ",,", "[;]", "[;", ";]", "[,", ",]", "[[[", "]]]", \
             ";[[", "]];"}
         if any(bad_combo in user_input for bad_combo in bad_combos) \
                 or user_input.count("(") != user_input.count(")") \
                 or user_input.count("[") != user_input.count("]"):
-            raise SyntaxError
+            raise SyntaxError("Incorrect syntax")
 
 
 def process_input(user_input):
@@ -71,8 +73,8 @@ def main():
             raise KeyboardInterrupt
         try:
             print(" ", process_input(user_input))
-        except:
-            print("Wrong input")
+        except Exception as ex:
+            print(f"Wrong input!\n{ex}")
 
 def try_run():
     try: print(" ", process_input(sys.argv[1]))

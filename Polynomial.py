@@ -143,4 +143,5 @@ class Polynomial(Data):
         copy = expression.split("^")[1:]
         for c in copy:
             if not c[0].isdigit():
-                raise SyntaxError
+                raise SyntaxError(
+                f"Forbidden character. Expected positive number or 0, got '{c[0]}'")

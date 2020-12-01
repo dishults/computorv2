@@ -40,6 +40,10 @@ class Data:
     def __pow__(self, other):
         return self.this() ** other
 
+    def __matmul__(self, other):
+        """Dot product"""
+        raise ArithmeticError("Can only do dot product between two matricies")
+
 
     def __rtruediv__(self, other):
         return other / self.this()
@@ -70,6 +74,7 @@ class Data:
         "^" : __pow__,
         "+" : __add__,
         "-" : __sub__,
+        "@" : __matmul__,
     }
 
     def math(self, sign, other):

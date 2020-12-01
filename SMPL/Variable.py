@@ -25,7 +25,7 @@ class Variable:
             elif var in Data.everything:
                 var = Data.everything[var]
             else:
-                raise TypeError
+                raise TypeError(f"Incorrect or unknown variable '{var}'")
         self.expression.append(var)
 
     def at_least_one_processed_var(self):

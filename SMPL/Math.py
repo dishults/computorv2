@@ -80,5 +80,5 @@ class Math(Data):
         if type(expression[one]) == str or expression[one].reserved:
             if type(expression[two]) != str:
                 expression[two].reserved = True
-                return True
+            return True
         return False

@@ -80,10 +80,43 @@ class Matrix(Data):
         return self.do_math(other, lambda a, b: a ** b)
 
     def __matmul__(self, other):
-        """Dot product"""
-        if isinstance(other, Matrix):
-            return self.dot(self, other)
-        return self.__pow__(other)
+        """Matrix-Matrix Multiplication (dot product).
+        The number of columns in the first matrix must be equal to 
+        the number of rows in the second matrix (self columns == other rows)
+        
+        For example, to calculate first cell in row 1 column 1:
+            sum of [A row 1] * [B column 1]
+        
+        Keyword arguments:
+        self - Matrix (1 or 2 dimensional)
+        other - Matrix (1 or 2 dimensional)
+        """
+
+        def dot(x, y):
+            return sum([x[i] * y[i] for i in range(len(y))])
+
+        def calculate(x, Y):
+            return [dot(x, y) for y in Y]
+
+        if not isinstance(other, Matrix):
+            return super().__matmul__(other)
+
+        other_t = Matrix.transpose(other.matrix)
+        if self.dimentions == 2 and len(self[0]) == len(other_t[0]):
+            res = [calculate(one_row, other_t) for one_row in self]
+        elif len(self) == len(other):
+            if other.dimentions == 2:
+                res = calculate(self, other_t)
+            else:
+                return Rational(dot(self, other))
+        else:
+            raise ArithmeticError(
+            "Number of Matrix_1 columns should be equal to the number of Matrix_2 rows." \
+            + "\nOr both should have one row and same length.")
+
+        if len(res) == 1:
+            return Rational(res[0])
+        return Matrix(res)
 
 
     def __radd__(self, other):
@@ -103,6 +136,7 @@ class Matrix(Data):
 
     def __rpow__(self, other):
         return self.do_math(other, lambda a, b: b ** a)
+
 
     def __isub__(self, other):
         """self -= other"""
@@ -168,50 +202,6 @@ class Matrix(Data):
         return Matrix(res)
 
     @staticmethod
-    def dot(A, B):
-        """Matrix-Matrix Multiplication.
-        The number of columns in the first matrix must be equal to 
-        the number of rows in the second matrix (A columns == B rows)
-        
-        For example, to calculate first cell in row 1 column 1:
-            sum of [A row 1] * [B column 1]
-        
-        Keyword arguments:
-        A - Matrix (1 or 2 dimensional)
-        B - Matrix (1 or 2 dimensional)
-        """
-
-        dot = lambda x, y: sum([x[i] * y[i] for i in range(len(y))])
-        def calc(x, Y):
-            res = []
-            for y in Y:
-                res.append(dot(x, y))
-            return res
-
-        error_msg = "Number of A columns should be equal to the number of B rows." \
-                    + "\nOr both should have one row and same length"
-        C = []
-        B_t = Matrix.transpose(B.matrix)
-        if A.dimentions == 2:
-            if len(A[0]) != len(B_t[0]):
-                raise ArithmeticError(error_msg)
-            for a_row in A:
-                row = calc(a_row, B_t)
-                C.append(row)
-        elif B.dimentions == 2:
-            if len(A) != len(B):
-                raise ArithmeticError(error_msg)
-            C = calc(A, B_t)
-        else:
-            if len(A) != len(B):
-                raise ArithmeticError(error_msg)
-            return Rational(dot(A, B))
-
-        if len(C) == 1:
-            return Rational(C[0])
-        return Matrix(C)
-
-    @staticmethod
     def transpose(matrix):
         T = []
         try:
@@ -241,10 +231,3 @@ class Matrix(Data):
         matrix = expression[:braket]
         expression = expression[braket:]
         return matrix, expression
-
-    #@staticmethod
-    #def fix_dot_operator(expression):
-    #    try:
-    #        return expression.replace("**", "@")
-    #    except:
-    #        return expression

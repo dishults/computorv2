@@ -4,6 +4,9 @@ class Data:
 
     everything = {}
 
+    def abstract(self):
+        self.expression = []
+
     def __lt__(self, other):
         return self.this() < other
 
@@ -84,18 +87,23 @@ class Data:
         pass
 
     @classmethod
-    def show(cls, name):
-        return cls.everything[name]
-    
+    def show_everything(cls):
+        res = "  "
+        for var in sorted(cls.everything):
+            res = f"{res}{var} : {cls.everything[var]}\n  "
+        return res.rstrip("\n  ")
+
     @classmethod
     def process_data(cls, name, rest):
         if name:
             cls.everything[name] = cls.everything[rest]
-        return Data.show(rest)
+        return cls.everything[rest]
 
     @classmethod
     def process(cls, name, *args):
         obj = cls(*args)
+        if hasattr(obj, "expression") and len(obj.expression) == 1:
+            obj = obj.expression[0]
         if name:
             cls.everything[name] = obj
         return obj

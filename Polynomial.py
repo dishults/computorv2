@@ -129,7 +129,7 @@ class Polynomial(Data):
             return Polynomial(expression, "x", rest).solution
 
         original = Data.everything[name]
-        if var == original.variable:
+        if hasattr(original, "variable") and var == original.variable:
             if rest == "0" and isinstance(original, Polynomial):
                 return original.solution
             elif not rest:

@@ -45,6 +45,11 @@ class Matrix(Data):
                 m += "]"
         return m
 
+    def alt_str(self):
+        if self.dimentions == 2:
+            return "[" + self.__str__().replace("\n  ", ";") + "]"
+        return self.__str__()
+
     def get_one_row(self, row):
         new_row = []
         for cell in row:
@@ -101,12 +106,15 @@ class Matrix(Data):
         if not isinstance(other, Matrix):
             return super().__matmul__(other)
 
-        other_t = Matrix.transpose(other.matrix)
+        other_t = Matrix.transpose(other)
+        # if self >= 1 columns and other >= 1 rows, and self nb columns == other nb rows
         if self.dimentions == 2 and len(self[0]) == len(other_t[0]):
             res = [calculate(one_row, other_t) for one_row in self]
-        elif len(self) == len(other):
+        elif self.dimentions == 1 and len(self) == len(other):
+            # if self 1 row and other 1 colomn, and both same length
             if other.dimentions == 2:
                 res = calculate(self, other_t)
+            # if self 1 row and other 1 row, and both same length
             else:
                 return Rational(dot(self, other))
         else:
@@ -203,6 +211,14 @@ class Matrix(Data):
 
     @staticmethod
     def transpose(matrix):
+        if not isinstance(matrix, Matrix):
+            if matrix in Data.everything:
+                matrix = Data.everything[matrix]
+            else:
+                try:
+                    matrix = Matrix(matrix)
+                except:
+                    raise TypeError("Can only transpose a matrix")
         T = []
         try:
             for j in range(len(matrix[0])):
@@ -214,7 +230,14 @@ class Matrix(Data):
         except:
             for i in range(len(matrix)):
                 T.append([matrix[i]])
-        return T
+        return Matrix(T)
+
+    @staticmethod
+    def get_matrix_from_expression(expression):
+        braket = Data.what_braket(expression, -1, "[", "]") + 1
+        matrix = expression[:braket]
+        expression = expression[braket:]
+        return matrix, expression
 
     @staticmethod
     def is_expression(expression):
@@ -226,8 +249,5 @@ class Matrix(Data):
         return False
 
     @staticmethod
-    def get_matrix_from_expression(expression):
-        braket = Data.what_braket(expression, -1, "[", "]") + 1
-        matrix = expression[:braket]
-        expression = expression[braket:]
-        return matrix, expression
+    def is_matrix(expression):
+        return "[" in expression and not Matrix.is_expression(expression)

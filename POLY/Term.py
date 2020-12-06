@@ -14,7 +14,10 @@ class Term:
             if inverse:
                 self.coefficient *= -1
         except:
-            self.coefficient = Data.everything[coefficient]
+            try:
+                self.coefficient = Data.everything[coefficient]
+            except:
+                raise TypeError(f"Expected number, got '{coefficient}'")
         self.variable = variable
         self.exponent = int(exponent)
     

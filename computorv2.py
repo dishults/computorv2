@@ -67,22 +67,34 @@ def process_input(user_input):
     return process_type(0, user_input)
 
 def main():
+    history = []
     while True:
         user_input = input("> ")
         if user_input == "exit" or user_input == "quit":
             raise KeyboardInterrupt
-        try:
-            print(" ", process_input(user_input))
-        except Exception as ex:
-            print(f"Wrong input!\n{ex}")
-
-def try_run():
-    try: print(" ", process_input(sys.argv[1]))
-    except: pass
+        elif user_input == "all":
+            print(Data.show_everything())
+        elif user_input == "history":
+            [print(entry) for entry in history]
+        elif "reset" in user_input:
+            if "variables" in user_input:
+                Data.everything = {}
+            elif "history" in user_input:
+                history = []
+            else:
+                print("choose between [variables] or [history]")
+        else:
+            try:
+                res = f"  {process_input(user_input)}"
+                history.append(f"\n  {user_input}\n{res}")
+                print(res)
+            except Exception as ex:
+                error_msg = f"Wrong input!\n{ex}"
+                history.append(f"\n  {user_input}\n{error_msg}")
+                print(error_msg)
 
 def test_main():
     print(" ", process_input(sys.argv[1]))
-    #try_run()
 
 if __name__ == "__main__":
     try:

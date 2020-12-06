@@ -8,7 +8,9 @@ def check_if_variable_is_expression(var):
     copy = var.strip("-")
     for sign in ("/", "%", "*", "^", "+", "-"):
         if sign in copy:
-            return calculate_function(var).expression[0]
+            return calculate_function(var)
+    if Matrix.is_matrix(var):
+        return Matrix(var)
     return var
 
 def process_expressions_in_variables(expression):
@@ -19,9 +21,12 @@ def process_expressions_in_variables(expression):
         except:
             break
         new_var = check_if_variable_is_expression(var)
-        if func and (isinstance(new_var, Number) or Data.is_number(new_var)):
+        if func and (isinstance(new_var, (Number, Matrix)) or Data.is_number(new_var)):
             res = Simple.calculate_function_with_variable(func, new_var)
-            res = str(res).replace(" ", "")
+            if isinstance(res, Matrix):
+                res = res.alt_str().replace(" ", "")
+            else:
+                res = str(res).replace(" ", "")
             expression = expression.replace(f"{func}({var})", res)
     return expression
 
@@ -36,7 +41,7 @@ def calculate_function(expression, rest=None):
             rest = process_expressions_in_variables(rest)
         try:
             return Polynomial.calculate(expression, rest)
-        except:
+        except ValueError:
             raise ValueError(ex)
 
 def save_function(name, rest, var=0):

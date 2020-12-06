@@ -32,7 +32,11 @@ class Simple(Math, Variable):
         else:
             f = brakets_or_not(self.expression[0])
         for e in self.expression[1:]:
-            f = f"{f} {brakets_or_not(e)}"
+            if isinstance(e, Matrix):
+                res = e.alt_str()
+                f = f"{f} {res}"
+            else:
+                f = f"{f} {brakets_or_not(e)}"
         f = f.replace("0 - ", "-")
         f = f.replace("+ -", "- ")
         f = f.replace("- -", "- ")

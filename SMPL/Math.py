@@ -1,10 +1,10 @@
 from Data import Data
 from Number import number, Rational, Complex
+from Matrix import Matrix
 
 class Math(Data):
 
     def abstract(self):
-        self.expression = []
         self.variable = None
         self.reserved = None
         self.negative = None
@@ -12,19 +12,24 @@ class Math(Data):
     def math(self, sign, other):
         return number(super().math(sign, other))
 
-    def this(self):
-        return self.expression[0]
+    def convert_variable(self, var):
+        if isinstance(var, Data):
+            return var
+        elif var in Data.everything:
+            return Data.everything[var]
+        elif Data.is_number(var):
+            return number(var)
+        elif var == self.variable:
+            raise ValueError
+        else:
+            raise SyntaxError(
+            f"Wrong variable '{var}', expected '{self.variable}' or number")
 
     def calculate_with_variable(self, expression, var):
-        if isinstance(var, Data):
-            new_var = var
-        elif var in Data.everything:
-            new_var = Data.everything[var]
-        else:
-            new_var = number(var)
+        var = self.convert_variable(var)
         for i, v in enumerate(expression):
             if type(v) == type(self.variable) and v == self.variable:
-                expression[i] = new_var
+                expression[i] = var
             elif isinstance(v, Data):
                 v.reserved = False
                 if isinstance(v, self.__class__):
@@ -33,6 +38,11 @@ class Math(Data):
 
     @staticmethod
     def calculate_function_with_variable(func, var):
+        if func == "transpose":
+            T = Matrix.transpose(var)
+            if len(T) == 1:
+                return Matrix(T[0])
+            return T
         obj = Data.everything[func]
         return obj.calculate_with_variable(obj.expression[:], var)
 

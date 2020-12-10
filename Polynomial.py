@@ -124,11 +124,12 @@ class Polynomial(Data):
     @staticmethod
     def calculate(expression, rest):
         try:
-            name, var = Simple.get_function_and_variable(expression)[:2]
-        except:
+            func, var, more = Simple.get_function_and_variable(expression)
+            assert not more
+        except ValueError:
             return Polynomial(expression, "x", rest).solution
 
-        original = Data.everything[name]
+        original = Data.everything[func]
         if hasattr(original, "variable") and var == original.variable:
             if rest == "0" and isinstance(original, Polynomial):
                 return original.solution

@@ -21,6 +21,8 @@ class Tests(unittest.TestCase):
             "i = 3",
             "f(i) = 4 * i",
             "f(x) = 3*x^-1",
+            "a = 1 + 4(2+3)",
+            "1 + 4(2+3)",
         ])
 
     def test_computation(self):
@@ -60,6 +62,9 @@ class Tests(unittest.TestCase):
             "[[1],[2]] ** [[1];[2]]",
             "2 ** [3,4]",
             "[3,4] ** 2",
+            "f(x) = [x, 2] + 2",
+            "m = [x,2]",
+            "[x,2]",
         ])
     
     def test_syntax(self):
@@ -85,6 +90,24 @@ class Tests(unittest.TestCase):
             "m = [[[1,2];[2,1]];[[1,2];[2,1]]]",  "[[1,2];[2,1]];[[1,2];[2,1]]",
             "[1,2] + 2 = 2 ?",
         ])
+        process_input("f(x) = x * x")
+        process_input("b(x) = 2 * x + 3")
+        self.do([
+            "c = f + b",
+            "c = f(x) + b(x)",
+            "c(x) = f(x) + b(x)",
+            "f + b",
+            "f(x) + b(x)",
+            ])
+        process_input("f(x) = x^2 + 2x + 1")
+        process_input("b(x) = x^2 + 2x + 1")
+        self.do([
+            "c = f + b",
+            "c = f(x) + b(x)",
+            "c(x) = f(x) + b(x)",
+            "f + b",
+            "f(x) + b(x)",
+            ])
 
 if __name__ == "__main__":
     unittest.main()

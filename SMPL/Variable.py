@@ -13,20 +13,33 @@ class Variable:
             var = number(var)
         except:
             if self.variable and self.variable in var:
-                # 4x
-                if self.variable != var:
-                    nb, var = var.split(self.variable)[0], self.variable
-                    # 4, x
-                    if Data.is_number(nb) and self.variable == var:
-                        self.expression.extend((number(nb), "*"))
-                # x in ()
-                else:
-                    self.reserved = True
+                var = self.get_the_variable(var)
             elif var in Data.everything:
-                var = Data.everything[var]
+                var = self.get_copy_from_data(var)
             else:
                 raise TypeError(f"Incorrect or unknown variable '{var}'")
         self.expression.append(var)
+
+    def get_the_variable(self, var):
+        # 4x
+        if self.variable != var:
+            nb, var = var.split(self.variable)[0], self.variable
+            # 4, x
+            if Data.is_number(nb) and self.variable == var:
+                self.expression.extend((number(nb), "*"))
+        # x in ()
+        else:
+            self.reserved = True
+        return var
+
+    def get_copy_from_data(self, var):
+        var = Data.everything[var]
+        if hasattr(var, "expression"):
+            if var.variable != self.variable:
+                raise TypeError
+            expression = str(var).replace(" ", "")
+            var = self.__class__(expression, var.variable)
+        return var
 
     def at_least_one_processed_var(self):
         for e in self.expression:

@@ -44,20 +44,20 @@ def calculate_function(expression, rest=None):
         except ValueError:
             raise ValueError(ex)
 
-def save_function(name, rest, var=0):
-    if "(" in name:
-        name, var = Simple.get_function_and_variable(name)[:2]
+def save_function(func, rest, var=0):
+    if "(" in func:
+        func, var = Simple.get_function_and_variable(func)[:2]
         if "^" in rest and var in rest and not "(" in rest:
-            return Polynomial.process(name, rest, var)
-    return Simple.process(name, rest, var)
+            return Polynomial.process(func, rest, var)
+    return Simple.process(func, rest, var)
 
-def process_function(name, rest):
-    if name:
-        return save_function(name, rest)
+def process_function(func, rest):
+    if func:
+        return save_function(func, rest)
     else:
         if "=" in rest:
-            rest, name = rest.split("=")
-            if name in Data.everything:
-                name = Data.everything[name]
-                name = str(name).replace(" ", "")
-        return calculate_function(rest, name)
+            rest, func = rest.split("=")
+            if func in Data.everything:
+                func = Data.everything[func]
+                func = str(func).replace(" ", "")
+        return calculate_function(rest, func)

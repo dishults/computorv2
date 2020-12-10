@@ -104,6 +104,8 @@ class Simple(Math, Variable):
         if i == None:
             i = expression.index("(")
         if i:
+            if not expression[i-1].isalpha():
+                raise TypeError(f"Expected function name, got '{expression[i-1]}'")
             braket = Data.what_braket(expression, -1)
             func = expression[:i]
             while func and not func.isalpha():

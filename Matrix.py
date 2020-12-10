@@ -66,24 +66,6 @@ class Matrix(Data):
         return len(self.matrix)
 
 
-    def __add__(self, other):
-        return self.do_math(other, lambda a, b: a + b)
-
-    def __sub__(self, other):
-        return self.do_math(other, lambda a, b: a - b)
-
-    def __mul__(self, other):
-        return self.do_math(other, lambda a, b: a * b)
-
-    def __truediv__(self, other):
-        return self.do_math(other, lambda a, b: a / b)
-
-    def __mod__(self, other):
-        return self.do_math(other, lambda a, b: a % b)
-
-    def __pow__(self, other):
-        return self.do_math(other, lambda a, b: a ** b)
-
     def __matmul__(self, other):
         """Matrix-Matrix Multiplication (dot product).
         The number of columns in the first matrix must be equal to 
@@ -126,43 +108,10 @@ class Matrix(Data):
             return Rational(res[0])
         return Matrix(res)
 
-
-    def __radd__(self, other):
-        return self.do_math(other, lambda a, b: b + a)
-
-    def __rsub__(self, other):
-        return self.do_math(other, lambda a, b: b - a)
-
-    def __rmul__(self, other):
-        return self.do_math(other, lambda a, b: b * a)
-
-    def __rtruediv__(self, other):
-        return self.do_math(other, lambda a, b: b / a)
-
-    def __rmod__(self, other):
-        return self.do_math(other, lambda a, b: b % a)
-
-    def __rpow__(self, other):
-        return self.do_math(other, lambda a, b: b ** a)
-
-
-    def __isub__(self, other):
-        """self -= other"""
-        return self.__sub__(other)
-    
-    def __neg__(self):
-        """-self"""
-        return self.__mul__(-1)
-
-    operations = {
-        "/" : __truediv__,
-        "%" : __mod__,
-        "*" : __mul__,
-        "^" : __pow__,
-        "+" : __add__,
-        "-" : __sub__,
+    operations = Data.operations.copy()
+    operations.update({
         "@" : __matmul__,
-    }
+    })
 
     def do_math(self, other, f):
         """Peform math operation [f] (+ - * / ^) on [self] and [other].

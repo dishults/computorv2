@@ -6,75 +6,54 @@ class Data:
 
     def abstract(self):
         self.expression = []
-
-    def __lt__(self, other):
-        return self.this() < other
-
-    def __ne__(self, other):
-        return self.this() != other
-
-    def __gt__(self, other):
-        return self.this() > other
-
-
-    def __truediv__(self, other):
-        number = self.this() / other
-        try:
-            if number * 10 % 10 == 0:
-                number = int(number)
-        except:
-            pass
-        return number
-
-    def __mod__(self, other):
-        if self.this() < 0:
-            return abs(self.this()) % other * -1
-        return self.this() % other
-
-    def __mul__(self, other):
-        return self.this() * other
-
-    def __add__(self, other):
-        return self.this() + other
-
-    def __sub__(self, other):
-        return self.this() - other
+        self.operations = {}
 
     def __pow__(self, other):
-        return self.this() ** other
+        return self.do_math(other, lambda a, b: a ** b)
+
+    def __truediv__(self, other):
+        return self.do_math(other, lambda a, b: a / b)
+
+    def __mod__(self, other):
+        return self.do_math(other, lambda a, b: a % b)
+
+    def __mul__(self, other):
+        return self.do_math(other, lambda a, b: a * b)
+
+    def __add__(self, other):
+        return self.do_math(other, lambda a, b: a + b)
+
+    def __sub__(self, other):
+        return self.do_math(other, lambda a, b: a - b)
 
     def __matmul__(self, other):
         """Dot product"""
         raise ArithmeticError("Can only do dot product between two matricies")
 
 
+    def __rpow__(self, other):
+        return self.do_math(other, lambda a, b: b ** a)
+
     def __rtruediv__(self, other):
-        return other / self.this()
+        return self.do_math(other, lambda a, b: b / a)
 
     def __rmod__(self, other):
-        return other % self.this()
+        return self.do_math(other, lambda a, b: b % a)
 
     def __rmul__(self, other):
-        return other * self.this()
+        return self.do_math(other, lambda a, b: b * a)
 
     def __radd__(self, other):
-        return other + self.this()
+        return self.do_math(other, lambda a, b: b + a)
 
     def __rsub__(self, other):
-        return other - self.this()
-
-    def __rpow__(self, other):
-        return other ** self.this()
-
-
-    def __neg__(self):
-        return self.math("*", -1)
+        return self.do_math(other, lambda a, b: b - a)
 
     operations = {
+        "^" : __pow__,
         "/" : __truediv__,
         "%" : __mod__,
         "*" : __mul__,
-        "^" : __pow__,
         "+" : __add__,
         "-" : __sub__,
         "@" : __matmul__,
@@ -83,7 +62,7 @@ class Data:
     def math(self, sign, other):
         return self.operations[sign](self, other)
 
-    def this(self):
+    def do_math(self, other, f):
         pass
 
     @classmethod

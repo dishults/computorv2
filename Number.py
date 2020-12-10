@@ -24,18 +24,64 @@ class Rational(Number):
     def __eq__(self, other):
         return self.number == other
 
+    def __lt__(self, other):
+        return self.number < other
+
+    def __ne__(self, other):
+        return self.number != other
+
+    def __gt__(self, other):
+        return self.number > other
+
+    def __neg__(self):
+        return self.math("*", -1)
+
+
+    def __truediv__(self, other):
+        number = self.number / other
+        try:
+            if number * 10 % 10 == 0:
+                number = int(number)
+        except:
+            pass
+        return number
+
+    def __mod__(self, other):
+        if self.number < 0:
+            return abs(self.number) % other * -1
+        return self.number % other
+
+    operations = Data.operations.copy()
+    operations.update({
+        "/" : __truediv__,
+        "%" : __mod__,
+    })
+
     def math(self, sign, other):
-        res = super().math(sign, other)
+        res = self.operations[sign](self, other)
         try:
             return number(res)
         except:
             return res
     
-    def this(self):
-        return self.number
+    def do_math(self, other, f):
+        return f(self.number, other)
 
 
 class Complex(Number):
+
+    def __pow__(self, other):
+        if not (isinstance(other, Rational) and type(other.number) == int \
+                and other.number >= 0):
+            raise ArithmeticError("The power should be a scalar, bigger or equal to 0")
+        n = other.number
+        if n == 0:
+            return Rational(1)
+        copy = self.get_complex_number(self.real, self.imaginary)
+        while n > 1:
+            copy = copy.__mul__(self)
+            n -= 1
+        return self.get_complex_number(copy.real, copy.imaginary)
 
     def __truediv__(self, other):
         real, imaginary = self.get_real_imaginary(other)
@@ -56,30 +102,9 @@ class Complex(Number):
         imaginary = a * d + b * c
         return self.get_complex_number(real, imaginary)
 
-    def __add__(self, other):
-        real, imaginary = self.get_real_imaginary(other)
-        real = self.real + real
-        imaginary = self.imaginary + imaginary
-        return self.get_complex_number(real, imaginary)
 
-    def __sub__(self, other):
-        real, imaginary = self.get_real_imaginary(other)
-        real = self.real - real
-        imaginary = self.imaginary - imaginary
-        return self.get_complex_number(real, imaginary)
-
-    def __pow__(self, other):
-        if not (isinstance(other, Rational) and type(other.number) == int \
-                and other.number >= 0):
-            raise ArithmeticError("The power should be a scalar bigger or equal to 0")
-        n = other.number
-        if n == 0:
-            return Rational(1)
-        copy = self.get_complex_number(self.real, self.imaginary)
-        while n > 1:
-            copy = copy.__mul__(self)
-            n -= 1
-        return self.get_complex_number(copy.real, copy.imaginary)
+    def __rpow__(self, other):
+        raise ArithmeticError("Can't raise to a complex power, try scalar instead")
 
     def __rtruediv__(self, other):
         if not isinstance(other, Complex):
@@ -96,29 +121,21 @@ class Complex(Number):
             other = self.get_complex_number(real, imaginary)
         return other.__mul__(self)
 
-    def __rpow__(self, other):
-        raise ArithmeticError("Can't raise to a complex power, try scalar instead")
-
-    def __radd__(self, other):
-        if not isinstance(other, Complex):
-            real, imaginary = self.get_real_imaginary(other)
-            other = self.get_complex_number(real, imaginary)
-        return other.__add__(self)
-
-    def __rsub__(self, other):
-        if not isinstance(other, Complex):
-            real, imaginary = self.get_real_imaginary(other)
-            other = self.get_complex_number(real, imaginary)
-        return other.__sub__(self)
-
-    operations = {
+    operations = Data.operations.copy()
+    operations.update({
+        "^" : __pow__,
         "/" : __truediv__,
         "%" : __mod__,
         "*" : __mul__,
-        "^" : __pow__,
-        "+" : __add__,
-        "-" : __sub__,
-    }
+    })
+
+    def do_math(self, other, f):
+        """Only for direct and reverse +-"""
+        self_real, self_imaginary = self.get_real_imaginary(self)
+        other_real, other_imaginary = self.get_real_imaginary(other)
+        real = f(self_real, other_real)
+        imaginary = f(self_imaginary, other_imaginary)
+        return self.get_complex_number(real, imaginary)
 
     def __init__(self, expression):
         expression = expression.replace("*i", "i")

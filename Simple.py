@@ -10,7 +10,6 @@ class Simple(Math, Variable):
         self.expression = []
         self.variable = variable
         self.reserved = False
-        self.negative = False
         if expression[0] == "-":
             expression = f"0{expression}"
         self.get_variables(expression)

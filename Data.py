@@ -81,7 +81,8 @@ class Data:
     @classmethod
     def process(cls, name, *args):
         obj = cls(*args)
-        if hasattr(obj, "expression") and len(obj.expression) == 1:
+        if hasattr(obj, "expression") and len(obj.expression) == 1 \
+                and type(obj.expression[0]) != str:
             obj = obj.expression[0]
         if name:
             cls.everything[name] = obj

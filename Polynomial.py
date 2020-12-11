@@ -13,6 +13,8 @@ class Polynomial(Data):
         self.all_terms = {}
         self.variable = variable
         expression = expression.replace("*", "").replace("^", "")
+        #init terms, so there are no errors if some are missing from the expression
+        self.get_terms(f"0{variable}2+0{variable}1+0{variable}0", variable, inverse)
         self.get_terms(expression, variable, inverse)
         if rest:
             rest = rest.replace("*", "").replace("^", "")

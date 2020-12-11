@@ -2,6 +2,7 @@
 
 import sys
 import readline
+import matplotlib.pyplot as plt
 
 import function as f
 
@@ -66,41 +67,63 @@ def process_input(user_input):
     user_input = user_input.strip("?")
     return process_type(0, user_input)
 
+def plot(expression):
+    expression = expression.lower().replace(" ", "")
+    func, var, rest = Simple.get_function_and_variable(expression)
+    if not expression.startswith("plot") or func != "plot" or rest:
+        raise SyntaxError("Usage: plot(function_name) and nothing else")
+    obj = Data.everything[var]
+    if not hasattr(obj, "expression"):
+        raise TypeError("Can only plot a function")
+    func = f"{var}({obj.variable}) = {obj}"
+    curve = [Simple.calculate_function_with_variable(var, v).number for v in range(-49, 50)]
+    plt.plot(range(-49, 50), curve)
+    plt.suptitle(f"Function curve for:\n{func}")
+    plt.ylabel("Results range")
+    plt.xlabel(f"{obj.variable} range")
+    plt.show()
+
 def main():
     history = []
     while True:
-        user_input = input("> ")
-        if user_input == "exit" or user_input == "quit":
-            raise KeyboardInterrupt
-        elif user_input == "all":
-            print(Data.show_everything())
-        elif user_input == "history":
-            [print(entry) for entry in history]
-        elif "reset" in user_input:
-            if "variables" in user_input:
-                Data.everything = {}
-            elif "history" in user_input:
-                history = []
+        try:
+            user_input = input("> ")
+            if user_input == "exit" or user_input == "quit":
+                raise KeyboardInterrupt
+            elif user_input == "all":
+                print(Data.show_everything())
+            elif user_input == "history":
+                [print(entry) for entry in history]
+            elif "reset" in user_input:
+                if "variables" in user_input:
+                    Data.everything = {}
+                elif "history" in user_input:
+                    history = []
+                else:
+                    print("choose between [variables] or [history]")
+            elif "plot(" in user_input:
+                plot(user_input)
+                history.append(f"\n  {user_input}")
             else:
-                print("choose between [variables] or [history]")
-        else:
-            try:
                 res = f"  {process_input(user_input)}"
                 history.append(f"\n  {user_input}\n{res}")
                 print(res)
-            except Exception as ex:
-                error_msg = f"Wrong input!\n{ex}"
-                history.append(f"\n  {user_input}\n{error_msg}")
-                print(error_msg)
+        except Exception as ex:
+            error_msg = f"Wrong input!\n{ex}"
+            history.append(f"\n  {user_input}\n{error_msg}")
+            print(error_msg)
 
 def test_main():
-    print(" ", process_input(sys.argv[1]))
+    if "plot(" in sys.argv[1]:
+        plot(sys.argv[1])
+    else:
+        print(" ", process_input(sys.argv[1]))
 
 if __name__ == "__main__":
-    try:
-        if len(sys.argv) == 2:
-            test_main()
-        else:
+    if len(sys.argv) == 2:
+        test_main()
+    else:
+        try:
             main()
-    except (KeyboardInterrupt, EOFError):
-        print()
+        except (KeyboardInterrupt, EOFError):
+            print("Byeeeee")

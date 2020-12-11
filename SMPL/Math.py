@@ -7,10 +7,6 @@ class Math(Data):
     def abstract(self):
         self.variable = None
         self.reserved = None
-        self.negative = None
-
-    def math(self, sign, other):
-        return number(super().math(sign, other))
 
     def convert_variable(self, var):
         if isinstance(var, Data):
@@ -43,8 +39,9 @@ class Math(Data):
             if len(T) == 1:
                 return Matrix(T[0])
             return T
-        obj = Data.everything[func]
-        return obj.calculate_with_variable(obj.expression[:], var)
+        else:
+            obj = Data.everything[func]
+            return obj.calculate_with_variable(obj.expression[:], var)
 
     @staticmethod
     def calculate_plus_minus(expression, i=1):

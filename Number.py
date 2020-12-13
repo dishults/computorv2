@@ -21,6 +21,9 @@ class Rational(Number):
     def __str__(self):
         return f"{self.number}"
 
+    def __float__(self):
+        return float(self.number)
+
     def __eq__(self, other):
         return self.number == other
 
@@ -222,6 +225,8 @@ class Complex(Number):
         elif isinstance(other, Complex):
             real = other.real
             imaginary = other.imaginary
+        else:
+            raise TypeError(f"Expected R/C number, got '{other}'")
         return real, imaginary
 
 

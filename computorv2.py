@@ -2,7 +2,6 @@
 
 import sys
 import readline
-import matplotlib.pyplot as plt
 
 import function as f
 
@@ -68,6 +67,7 @@ def process_input(user_input):
     return process_type(0, user_input)
 
 def plot(expression):
+    import matplotlib.pyplot as plt    
     expression = expression.lower().replace(" ", "")
     func, var, rest = Simple.get_function_and_variable(expression)
     if not expression.startswith("plot") or func != "plot" or rest:

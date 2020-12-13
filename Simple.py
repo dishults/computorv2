@@ -36,9 +36,7 @@ class Simple(Math, Variable):
                 f = f"{f} {res}"
             else:
                 f = f"{f} {brakets_or_not(e)}"
-        f = f.replace("0 - ", "-")
-        f = f.replace("+ -", "- ")
-        f = f.replace("- -", "- ")
+        f = f.replace("0 - ", "-").replace("+ -", "- ").replace("- -", "- ")
         return f
 
     def get_variables(self, expression):

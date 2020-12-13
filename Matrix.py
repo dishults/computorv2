@@ -53,7 +53,15 @@ class Matrix(Data):
     def get_one_row(self, row):
         new_row = []
         for cell in row:
-            new_row.append(number(cell))
+            try:
+                new_row.append(number(cell))
+            except:
+                from Simple import Simple
+                try:
+                    res = Simple.process(0, cell)
+                    new_row.append(res)
+                except:
+                    raise TypeError(f"Wrong cell '{cell}' in the matrix's row")
         return new_row
 
     def __getitem__(self, item):

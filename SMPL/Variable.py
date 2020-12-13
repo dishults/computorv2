@@ -1,6 +1,6 @@
 
 from Data import Data
-from Number import number
+from Number import number, Rational
 
 class Variable:
 
@@ -80,9 +80,11 @@ class Variable:
             while s >= 0:
                 sign, second = self.get_second(s)
                 second = first.math(sign, second)
-                if second < 0:
+                if isinstance(second, Rational) and second < 0:
                     second = -second
                     self.expression[s] = "-"
+                elif sign == "-":
+                    self.expression[s] = "+"
                 self.expression[s+1] = second
                 f = s
                 s = self.find_variable(s+2)

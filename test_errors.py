@@ -38,10 +38,13 @@ class Tests(unittest.TestCase):
             "(2 + 3i) ^ 3.1", "(2 + 3i) ^ -1",
             "plot", "plot()", "plot(a)", "plot(b)", "plot(2)", "plot + 2",
             "2 + plot", "plot(f) + 2", "2 + plot(f)",
+            "(2+3i) - [1,2]",
         ])
 
     def test_matricies(self):
+        process_input("a = [1,2]")
         self.do([
+            "a + 2 = 2 ?",
             "[3,4] ** [1,2,3]",
             "[3,4] * [1,2,3]",
             "[3,4,5] ** [1,2]",

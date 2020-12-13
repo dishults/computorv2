@@ -49,6 +49,9 @@ class Data:
     def __rsub__(self, other):
         return self.do_math(other, lambda a, b: b - a)
 
+    def __neg__(self):
+        return self.__mul__(-1)
+
     operations = {
         "^" : __pow__,
         "/" : __truediv__,
@@ -91,16 +94,10 @@ class Data:
     @staticmethod
     def is_number(var):
         try:
-            assert var.isdigit()
+            float(var)
+            return True
         except:
-            try:
-                assert type(float(var)) == float
-            except:
-                try:
-                    assert type(int(var)) == int
-                except:
-                    return False
-        return True
+            return False
 
     @staticmethod
     def what_braket(expression, braket=0, opening="(", closing=")"):

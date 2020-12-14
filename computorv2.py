@@ -87,7 +87,7 @@ def main():
     history = []
     while True:
         try:
-            user_input = input(f"{GREEN}>{END} ")
+            user_input = input("> ")
             if not user_input:
                 continue
             elif user_input == "exit" or user_input == "quit":

@@ -75,7 +75,7 @@ def plot(expression):
     obj = Data.everything[var]
     if not hasattr(obj, "expression"):
         raise TypeError("Can only plot a function")
-    func = f"{var}({obj.variable}) = {Data.remove_colors(obj)}"
+    func = f"{var}({obj.variable}) = {Data.remove_colors(str(obj))}"
     curve = [Simple.calculate_function_with_variable(var, v).number for v in range(-49, 50)]
     plt.plot(range(-49, 50), curve)
     plt.suptitle(f"Function curve for:\n{func}")
@@ -88,7 +88,9 @@ def main():
     while True:
         try:
             user_input = input(f"{GREEN}>{END} ")
-            if user_input == "exit" or user_input == "quit":
+            if not user_input:
+                continue
+            elif user_input == "exit" or user_input == "quit":
                 raise KeyboardInterrupt
             elif user_input == "all":
                 print(Data.show_everything())

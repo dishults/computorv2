@@ -59,6 +59,8 @@ class Tests(unittest.TestCase):
             "f(x) = [x, 2] + 2",
             "m = [x,2]",
             "[x,2]",
+            "[[1,2];[3]] + [[1,2];[3,4]]",
+            "[[1,2];[3]] @ [[1,2];[3,4]]",
         ])
     
     def test_syntax(self):

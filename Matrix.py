@@ -9,10 +9,14 @@ class Matrix(Data):
         self.dimentions = 1
         if type(matrix) != str:
             self.matrix = matrix
-            for m in matrix:
-                if type(m) == list:
-                    self.dimentions = 2
-                    break
+            if isinstance(self.matrix[0], Matrix):
+                self.dimentions = 2
+                self.check_matrix_shape()
+            elif type(self.matrix[0]) == list:
+                self.dimentions = 2
+                for i, m in enumerate(matrix):
+                    self.matrix[i] = Matrix(m)
+                self.check_matrix_shape()
         elif ";" in matrix:
             self.dimentions = 2
             # ['[[2,3]', '[4,3]]']
@@ -20,9 +24,8 @@ class Matrix(Data):
             self.matrix = []
             # [['2', '3'], ['4', '3']]
             for m in matrix:
-                new = m.strip("[]").split(",")
-                new = self.get_one_row(new)
-                self.matrix.append(new)
+                m = m.replace("[[", "[").replace("]]", "]")
+                self.matrix.append(Matrix(m))
         else:
             new = matrix.strip("[]").split(",")
             self.matrix = self.get_one_row(new)
@@ -50,6 +53,10 @@ class Matrix(Data):
         if self.dimentions == 2:
             return f"{BLUE}[{END}" + self.__str__().replace("\n  ", f"{YELLOW};{END}") + f"{BLUE}]{END}"
         return self.__str__()
+
+    def check_matrix_shape(self):
+        if sum([len(m) for m in self.matrix]) % len(self.matrix) != 0:
+            raise TypeError("Each matrix row should be of the same size")
 
     def get_one_row(self, row):
         new_row = []
@@ -99,18 +106,21 @@ class Matrix(Data):
         if not isinstance(other, Matrix):
             return super().__matmul__(other)
 
-        other_t = Matrix.transpose(other)
-        # if self >= 1 columns and other >= 1 rows, and self nb columns == other nb rows
-        if self.dimentions == 2 and len(self[0]) == len(other_t[0]):
-            res = [calculate(one_row, other_t) for one_row in self]
-        elif self.dimentions == 1 and len(self) == len(other):
-            # if self 1 row and other 1 colomn, and both same length
-            if other.dimentions == 2:
-                res = calculate(self, other_t)
-            # if self 1 row and other 1 row, and both same length
+        try:
+            other_t = Matrix.transpose(other)
+            # if self >= 1 columns and other >= 1 rows, and self nb columns == other nb rows
+            if self.dimentions == 2 and len(self[0]) == len(other_t[0]):
+                res = [calculate(one_row, other_t) for one_row in self]
+            elif self.dimentions == 1 and len(self) == len(other):
+                # if self 1 row and other 1 colomn, and both same length
+                if other.dimentions == 2:
+                    res = calculate(self, other_t)
+                # if self 1 row and other 1 row, and both same length
+                else:
+                    return Rational(dot(self, other))
             else:
-                return Rational(dot(self, other))
-        else:
+                raise ArithmeticError
+        except:
             raise ArithmeticError(
             "Number of Matrix_1 columns should be equal to the number of Matrix_2 rows." \
             + "\nOr both should have one row and same length.")

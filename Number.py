@@ -1,8 +1,9 @@
-from Data import Data
+from Data import Data, GREEN, CYAN, END
 
 class Number(Data):
 
     def __init__(self, number):
+        number = Data.remove_colors(number)
         self.number = self.convert_to_num(number)
         self.reserved = False
 
@@ -10,7 +11,7 @@ class Number(Data):
     def convert_to_num(number):
         if type(number) in (float, int):
             return number
-        elif "." in number:
+        elif type(number) == str and "." in number:
             return float(number)
         else:
             return int(number)
@@ -19,7 +20,13 @@ class Number(Data):
 class Rational(Number):
 
     def __str__(self):
-        return f"{self.number}"
+        return f"{GREEN}{self.number}{END}"
+
+    def __abs__(self):
+        return abs(self.number)
+
+    def __int__(self):
+        return int(self.number)
 
     def __float__(self):
         return float(self.number)
@@ -30,11 +37,17 @@ class Rational(Number):
     def __lt__(self, other):
         return self.number < other
 
+    def __le__(self, other):
+        return self.number <= other
+
     def __ne__(self, other):
         return self.number != other
 
     def __gt__(self, other):
         return self.number > other
+
+    def __ge__(self, other):
+        return self.number >= other
 
     def __neg__(self):
         return self.math("*", -1)
@@ -44,7 +57,7 @@ class Rational(Number):
         number = self.number / other
         try:
             if number * 10 % 10 == 0:
-                number = int(number)
+                return Rational(int(number))
         except:
             pass
         return number
@@ -62,13 +75,11 @@ class Rational(Number):
 
     def math(self, sign, other):
         res = self.operations[sign](self, other)
-        try:
-            return number(res)
-        except:
-            return res
+        return number(res)
     
     def do_math(self, other, f):
-        return f(self.number, other)
+        res = f(self.number, other)
+        return number(res)
 
 
 class Complex(Number):
@@ -141,6 +152,7 @@ class Complex(Number):
         return self.get_complex_number(real, imaginary)
 
     def __init__(self, expression):
+        expression = Data.remove_colors(expression)
         expression = expression.replace("*i", "i")
         self.reserved = False
         try:
@@ -156,21 +168,23 @@ class Complex(Number):
     def __str__(self):
         if self.real:
             if not self.imaginary:
-                return f"{self.real}"
-            elif self.imaginary > 0:
-                sign = "+"
+                c = f"{self.real}"
             else:
-                sign = "-"
-            return f"{self.real} {sign} {abs(self.imaginary)}i"
+                if self.imaginary > 0:
+                    sign = "+"
+                else:
+                    sign = "-"
+                c = f"{self.real} {sign} {abs(self.imaginary)}i"
         else:
             if not self.imaginary:
-                return "0"
+                c = "0"
             elif self.imaginary == 1:
-                return "i"
+                c = "i"
             elif self.imaginary == -1:
-                return "-i"
+                c = "-i"
             else:
-                return f"{self.imaginary}i"
+                c = f"{self.imaginary}i"
+        return f"{CYAN}{c}{END}"
 
     def process_signs(self, expression):
         if "-" in expression[1:]:
@@ -232,9 +246,11 @@ class Complex(Number):
 
 def number(number):
     try:
-        if isinstance(number, Complex):
+        if isinstance(number, Number):
             return number
-        assert "i" in number
-        return Complex(number)
+        if type(number) == str and "i" in number:
+            return Complex(number)
+        else:
+            return Rational(number)
     except:
-        return Rational(number)
+        return number

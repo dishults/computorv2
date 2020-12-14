@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import unittest
+
 from computorv2 import process_input
 
 class Tests(unittest.TestCase):

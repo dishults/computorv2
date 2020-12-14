@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
 import unittest
+
 from computorv2 import process_input, Data
+from Data import Data
+remove_colors = Data.remove_colors
 
 class Tests(unittest.TestCase):
 
@@ -9,7 +12,8 @@ class Tests(unittest.TestCase):
         for test, correct in tests:
             try:
                 res = process_input(test)
-                self.assertEqual(str(res), correct)
+                res = remove_colors(str(res))
+                self.assertEqual(res, correct)
             except:
                 self.fail(test)
 

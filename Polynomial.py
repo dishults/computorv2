@@ -2,13 +2,14 @@ import sys
 
 import POLY.formula as formula
 
-from Data import Data
+from Data import Data, MAGENTA, END
 from Simple import Simple
 from POLY.Term import Term
 
 class Polynomial(Data):
     
     def __init__(self, expression, variable, rest=None, inverse=False):
+        expression = Data.remove_colors(expression)
         self.check_expression(expression)
         self.all_terms = {}
         self.variable = variable
@@ -17,6 +18,7 @@ class Polynomial(Data):
         self.get_terms(f"0{variable}2+0{variable}1+0{variable}0", variable, inverse)
         self.get_terms(expression, variable, inverse)
         if rest:
+            rest = Data.remove_colors(rest)
             rest = rest.replace("*", "").replace("^", "")
             self.get_terms(rest, variable, inverse=True)
         self.get_degree()
@@ -40,12 +42,13 @@ class Polynomial(Data):
             elif term.coefficient < 0:
                 p += f" - {term}"
         if p.startswith(" +"):
-            return p.strip(" +")
+            p = p.strip(" +")
         elif p.startswith(" -"):
-            return "-" + p.strip(" - ")
-        if not p:
+            p = "-" + p.strip(" - ")
+        elif not p:
             return "0"
-        return p
+        p = Data.remove_colors(p)
+        return f"{MAGENTA}{p}{END}"
 
     def get_terms(self, expression, variable, inverse=False):
         previous = "+"

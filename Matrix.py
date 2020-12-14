@@ -1,9 +1,10 @@
-from Data import Data
-from Number import Rational, Complex, number
+from Data import Data, YELLOW, BLUE, END
+from Number import Rational, Complex, Number, number
 
 class Matrix(Data):
 
     def __init__(self, matrix):
+        matrix = Data.remove_colors(matrix)
         self.reserved = False
         self.dimentions = 1
         if type(matrix) != str:
@@ -27,34 +28,36 @@ class Matrix(Data):
             self.matrix = self.get_one_row(new)
 
     def __str__(self):
-        m = "["
+        m = f"{BLUE}[{END}"
         if self.dimentions == 1:
             for c, cell in enumerate(self.matrix):
                 if c > 0:
                     m += ","
                 m += f" {cell} "
-            m += "]"
+            m += f"{BLUE}]{END}"
         elif self.dimentions == 2:
             for r, row in enumerate(self.matrix):
                 if r > 0:
-                    m += "\n  ["
+                    m += f"\n  {BLUE}[{END}"
                 for c, cell in enumerate(row):
                     if c > 0:
                         m += ","
                     m += f" {cell} "
-                m += "]"
+                m += f"{BLUE}]{END}"
         return m
 
     def alt_str(self):
         if self.dimentions == 2:
-            return "[" + self.__str__().replace("\n  ", ";") + "]"
+            return f"{BLUE}[{END}" + self.__str__().replace("\n  ", f"{YELLOW};{END}") + f"{BLUE}]{END}"
         return self.__str__()
 
     def get_one_row(self, row):
         new_row = []
         for cell in row:
             try:
-                new_row.append(number(cell))
+                num = number(cell)
+                assert isinstance(num, Number)
+                new_row.append(num)
             except:
                 from Simple import Simple
                 try:

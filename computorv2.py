@@ -7,7 +7,7 @@ import function as f
 
 from Number import Rational, Complex
 
-from Data import Data, ALLOWED
+from Data import Data, ALLOWED, GREEN, YELLOW, END
 from Simple import Simple
 from Matrix import Matrix
 
@@ -75,7 +75,7 @@ def plot(expression):
     obj = Data.everything[var]
     if not hasattr(obj, "expression"):
         raise TypeError("Can only plot a function")
-    func = f"{var}({obj.variable}) = {obj}"
+    func = f"{var}({obj.variable}) = {Data.remove_colors(obj)}"
     curve = [Simple.calculate_function_with_variable(var, v).number for v in range(-49, 50)]
     plt.plot(range(-49, 50), curve)
     plt.suptitle(f"Function curve for:\n{func}")
@@ -87,7 +87,7 @@ def main():
     history = []
     while True:
         try:
-            user_input = input("> ")
+            user_input = input(f"{GREEN}>{END} ")
             if user_input == "exit" or user_input == "quit":
                 raise KeyboardInterrupt
             elif user_input == "all":
@@ -126,4 +126,4 @@ if __name__ == "__main__":
         try:
             main()
         except (KeyboardInterrupt, EOFError):
-            print("Byeeeee")
+            print(f"{YELLOW}Byeeeee{END}")

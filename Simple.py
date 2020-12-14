@@ -1,4 +1,4 @@
-from Data import Data, ALLOWED
+from Data import Data, ALLOWED, GREEN, YELLOW, END
 from Number import Number, Rational, Complex, number
 from Matrix import Matrix
 from SMPL.Math import Math
@@ -7,6 +7,7 @@ from SMPL.Variable import Variable
 class Simple(Math, Variable):
 
     def __init__(self, expression, variable=0):
+        expression = Data.remove_colors(expression)
         self.expression = []
         self.variable = variable
         self.reserved = False
@@ -23,7 +24,7 @@ class Simple(Math, Variable):
         def brakets_or_not(e):
             if (isinstance(e, Complex) and e.real and e.imaginary) \
                     or isinstance(e, Simple):
-                return f"({e})"
+                return f"{YELLOW}({END}{e}{YELLOW}){END}"
             return f"{e}"
 
         if len(self.expression) == 1:
@@ -36,7 +37,9 @@ class Simple(Math, Variable):
                 f = f"{f} {res}"
             else:
                 f = f"{f} {brakets_or_not(e)}"
-        f = f.replace("0 - ", "-").replace("+ -", "- ").replace("- -", "- ")
+        f = f.replace(f"{GREEN}0{END}", "0").replace("0 - ", "-")\
+             .replace(f"+ {GREEN}-", f"- {GREEN}")\
+             .replace(f"- {GREEN}-", f"- {GREEN}")
         return f
 
     def get_variables(self, expression):

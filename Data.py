@@ -1,5 +1,12 @@
 ALLOWED = ("+", "-", "/", "%", "^", "*", "@")
 
+GREEN="\033[32m"
+CYAN="\033[36m"
+BLUE="\033[34m"
+YELLOW="\033[33m"
+MAGENTA="\033[35m"
+END="\033[0m"
+
 class Data:
 
     everything = {}
@@ -111,3 +118,13 @@ class Data:
                 else:
                     braket -= 1
         return i
+
+    @staticmethod
+    def remove_colors(string):
+        try:
+            for color in GREEN, CYAN, BLUE, YELLOW, MAGENTA, END:
+                string = string.replace(color, "")
+        # if string is int or float
+        except:
+            pass
+        return string

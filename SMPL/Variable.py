@@ -1,6 +1,6 @@
 
 from Data import Data
-from Number import number, Rational
+from Number import number, Rational, Number
 
 class Variable:
 
@@ -11,6 +11,7 @@ class Variable:
     def process_variable(self, var):
         try:
             var = number(var)
+            assert isinstance(var, Number)
         except:
             if self.variable and self.variable in var:
                 var = self.get_the_variable(var)

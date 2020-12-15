@@ -17,8 +17,10 @@ class Term:
             try:
                 self.coefficient = Data.everything[coefficient]
                 assert Data.is_number(self.coefficient)
-            except:
+            except AssertionError:
                 raise TypeError(f"Expected number, got '{self.coefficient}'")
+            except:
+                raise TypeError(f"Wrong coefficient '{coefficient}'")
         self.variable = variable
         self.exponent = int(exponent)
     

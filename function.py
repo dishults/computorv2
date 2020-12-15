@@ -45,6 +45,7 @@ def calculate_function(expression, rest=None):
             raise ValueError(ex)
 
 def save_function(func, rest, var=0):
+    assert rest
     if "(" in func:
         func, var = Simple.get_function_and_variable(func)[:2]
         if "^" in rest and var in rest and not "(" in rest:

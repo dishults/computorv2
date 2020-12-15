@@ -45,10 +45,10 @@ def check_input(user_input, allowed_chars=".,()[;]=?0123456789"):
             if "(" in user_input:
                 if Data.is_number(char) or char in ",()[;]" or ALLOWED:
                     continue
-            raise SyntaxError(f"Forbidden character '{char}'")
+            raise SyntaxError(f"'{char}'")
     if allowed_chars:
-        bad_combos = {"[]", "()", ",,", "[;]", "[;", ";]", "[,", ",]", "[[[", "]]]", \
-            ";[[", "]];"}
+        bad_combos = {"()", ",,", "==", "[]", "[;]", "[;", ";]", \
+            "[,", ",]", "[[[", "]]]", ";[[", "]];"}
         if any(bad_combo in user_input for bad_combo in bad_combos) \
                 or user_input.count("(") != user_input.count(")") \
                 or user_input.count("[") != user_input.count("]"):
@@ -115,17 +115,8 @@ def main():
             history.append(f"\n  {user_input}\n{error_msg}")
             print(error_msg)
 
-def test_main():
-    if "plot(" in sys.argv[1]:
-        plot(sys.argv[1])
-    else:
-        print(" ", process_input(sys.argv[1]))
-
 if __name__ == "__main__":
-    if len(sys.argv) == 2:
-        test_main()
-    else:
-        try:
-            main()
-        except (KeyboardInterrupt, EOFError):
-            print(f"{YELLOW}Byeeeee{END}")
+    try:
+        main()
+    except (KeyboardInterrupt, EOFError):
+        print(f"{YELLOW}Byeeeee{END}")

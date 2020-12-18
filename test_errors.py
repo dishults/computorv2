@@ -85,6 +85,11 @@ class Tests(unittest.TestCase):
             "f( = 4", "f) = 4", "f(x = 4)", "f(=)",
             "m = [[[1,2];[2,1]];[[1,2];[2,1]]]",  "[[1,2];[2,1]];[[1,2];[2,1]]",
             "[1,2] + 2 = 2 ?",
+            "sfhjsre srehj regjl",
+            "sfhjsre srehji regjl",
+            "i osdfg gfj",
+            "fgh sduyre i",
+            "dshjf i dshjf",
         ])
         process_input("f(x) = x * x")
         process_input("b(x) = 2 * x + 3")

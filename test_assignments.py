@@ -49,6 +49,7 @@ class Tests(unittest.TestCase):
             ["e = 2i",       "2i"],
             ["e = ?",        "2i"],
             ["e",            "2i"],
+            ["2 4i",         "24i"],
         ])
 
     def test_matricies(self):

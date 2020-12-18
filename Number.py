@@ -160,9 +160,12 @@ class Complex(Number):
         except:
             real, imaginary = 0, self.strip_i(expression)
         self.real = self.convert_to_num(real)
-        try:
-            self.imaginary = self.convert_to_num(imaginary)
-        except:
+        if imaginary:
+            try:
+                self.imaginary = self.convert_to_num(imaginary)
+            except:
+                raise TypeError(f"Expected number before 'i', got '{imaginary}'")
+        else:
             self.imaginary = 1
 
     def __str__(self):
@@ -204,10 +207,11 @@ class Complex(Number):
 
     @staticmethod
     def strip_i(imaginary):
-        if "*" in imaginary:
-            imaginary = imaginary.split("*")[0]
-        else:
-            imaginary = imaginary.split("i")[0]
+        try:
+            imaginary, rest = imaginary.split("i")
+            assert not rest, f"Expected nothing after 'i', got '{rest}'"
+        except ValueError:
+            return imaginary
         return imaginary
 
     @staticmethod
